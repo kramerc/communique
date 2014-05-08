@@ -1,7 +1,7 @@
 {
   "name": "communique",
   "version": "0.0.0",
-  "main": "index.js",
+  "main": "lib/browser/main.js",
   "devDependencies": {
     "async": "^0.8.0",
     "grunt-download-atom-shell": "^0.7.0",
