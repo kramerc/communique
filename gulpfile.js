@@ -5,6 +5,7 @@ var gulp = require('gulp');
 var mkdirp = require('mkdirp');
 var ncp = require('ncp');
 var path = require('path');
+var react = require('gulp-react');
 var spawn = require('child_process').spawn;
 var standaloneGruntRunner = require('standalone-grunt-runner');
 
@@ -18,6 +19,10 @@ var paths = {
     mac: 'dist/Atom.app/Contents/MacOS/atom',
     others: 'dist/atom-shell/atom',
   },
+  buildDir: 'build',
+  build: {
+    reactDir: 'build/react'
+  },
   distDir: 'dist',
   libDir: 'lib',
   package: 'package.json',
@@ -25,7 +30,8 @@ var paths = {
     mac: 'dist/Atom.app/Contents/Resources/app',
     others: 'dist/atom-shell/resources/app'
   },
-  staticDir: 'static'
+  staticDir: 'static',
+  react: 'lib/react/**/*.jsx'
 };
 
 gulp.task('default', ['run']);
@@ -52,15 +58,17 @@ gulp.task('download-atom-shell', function (callback) {
   });
 });
 
-gulp.task('package', ['download-atom-shell'], function (callback) {
+gulp.task('package', ['download-atom-shell', 'react'], function (callback) {
   var copy = function (src, dest) {
     return gulp.src(src)
       .pipe(gulp.dest(dest));
   };
 
-  var copyDir = function (src, dest) {
+  var copyDir = function (src, dest, options) {
+    options = options || {};
+
     return function (cb) {
-      ncp(src, dest, function (err) {
+      ncp(src, dest, options, function (err) {
         cb(err);
       });
     };
@@ -85,12 +93,28 @@ gulp.task('package', ['download-atom-shell'], function (callback) {
 
       copy(paths.package, distDir);
 
-      async.parallel([
-        copyDir(paths.libDir, path.join(distDir, 'lib')),
+      async.series([
+        copyDir(paths.libDir, path.join(distDir, 'lib'), {
+          filter: function (file) {
+            // Don't copy the react folder.
+            if (file.match(/\/react$/)) {
+              return false;
+            }
+
+            return true;
+          }
+        }),
+        copyDir(paths.build.reactDir, path.join(distDir, 'lib/react')),
         copyDir(paths.staticDir, path.join(distDir, 'static'))
       ], callback);
     });
   });
+});
+
+gulp.task('react', function () {
+  return gulp.src(paths.react)
+    .pipe(react())
+    .pipe(gulp.dest(paths.build.reactDir));
 });
 
 gulp.task('run', ['download-atom-shell', 'package'], function () {

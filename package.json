@@ -2,10 +2,14 @@
   "name": "communique",
   "version": "0.0.0",
   "main": "lib/browser/main.js",
+  "dependencies": {
+    "react": "^0.10.0"
+  },
   "devDependencies": {
     "async": "^0.8.0",
     "grunt-download-atom-shell": "^0.7.0",
     "gulp": "^3.6.2",
+    "gulp-react": "^0.3.3",
     "mkdirp": "^0.5.0",
     "ncp": "^0.5.1",
     "standalone-grunt-runner": "0.0.1"
