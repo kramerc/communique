@@ -1,7 +1,5 @@
 /** @jsx React.DOM */
 
-'use strict';
-
 var ipc = require('ipc');
 var React = require('react');
 
@@ -12,21 +10,21 @@ var Message = React.createClass({
         <span className="nick">{this.props.nick}</span>
         {this.props.children.toString()}
       </li>
-    )
+    );
   }
 });
 
 var MessageList = React.createClass({
   render: function () {
     var messageNodes = this.props.data.map(function (message) {
-      return <Message nick={message.from}>{message.message}</Message>
+      return <Message nick={message.from}>{message.message}</Message>;
     });
 
     return (
       <ul>
         {messageNodes}
       </ul>
-    )
+    );
   }
 });
 
@@ -47,7 +45,7 @@ var MessageForm = React.createClass({
       </form>
     );
   }
-})
+});
 
 var Messages = React.createClass({
   handleMessageSubmit: function (message) {

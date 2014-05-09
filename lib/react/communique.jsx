@@ -1,7 +1,5 @@
 /** @jsx React.DOM */
 
-'use strict';
-
 var React = require('react');
 
 var Messages = require('./messages');
