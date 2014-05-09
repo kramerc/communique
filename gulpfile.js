@@ -14,6 +14,10 @@ var paths = {
     downloadDir: 'cache/atom-shell',
     outputDir: 'dep/atom-shell'
   },
+  distApp: {
+    mac: 'dist/Atom.app/Contents/MacOS/atom',
+    others: 'dist/atom-shell/atom',
+  },
   distDir: 'dist',
   libDir: 'lib',
   package: 'package.json',
@@ -89,14 +93,15 @@ gulp.task('package', ['download-atom-shell'], function (callback) {
   });
 });
 
-gulp.task('run', ['download-atom-shell'], function () {
+gulp.task('run', ['download-atom-shell', 'package'], function () {
+  var distApp;
   if (process.platform === 'darwin') {
-    spawn(paths.atomShell.outputDir + '/Atom.app/Contents/MacOS/Atom', ['.'], {
-      stdio: 'inherit'
-    });
+    distApp = paths.distApp.mac;
   } else {
-    spawn(paths.atomShell.outputDir + '/atom-shell/atom', ['.'], {
-      stdio: 'inherit'
-    });
+    distApp = paths.distApp.others;
   }
+
+  spawn(distApp, [], {
+    stdio: 'inherit'
+  });
 });
