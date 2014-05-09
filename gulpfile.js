@@ -88,7 +88,7 @@ gulp.task('package', ['download-atom-shell'], function (callback) {
       async.parallel([
         copyDir(paths.libDir, path.join(distDir, 'lib')),
         copyDir(paths.staticDir, path.join(distDir, 'static'))
-      ], callback(err));
+      ], callback);
     });
   });
 });
