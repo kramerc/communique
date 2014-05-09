@@ -15,29 +15,65 @@ var standaloneGruntRunner = require('standalone-grunt-runner');
 
 var atomShellVersion = '0.12.3';
 var paths = {
-  atomShell: {
-    downloadDir: 'cache/atom-shell',
-    outputDir: 'dep/atom-shell'
-  },
-  distApp: {
-    mac: 'dist/Atom.app/Contents/MacOS/atom',
-    others: 'dist/atom-shell/atom',
-  },
-  buildDir: 'build',
   build: {
-    reactDir: 'build/react',
-    stylesDir: 'build/styles'
+    dir: 'build',
+    react: {
+      dir: 'build/react'
+    },
+    styles: {
+      dir: 'build/styles'
+    }
   },
-  distDir: 'dist',
-  libDir: 'lib',
-  package: 'package.json',
-  resourcesDir: {
-    mac: 'dist/Atom.app/Contents/Resources/app',
-    others: 'dist/atom-shell/resources/app'
+  cache: {
+    dir: 'cache',
+    atomShell: {
+      download: {
+        dir: 'cache/atom-shell'
+      }
+    }
   },
-  staticDir: 'static',
-  styles: 'static/styles/**/*.less',
-  react: 'lib/react/**/*.jsx'
+  deps: {
+    dir: 'deps',
+    atomShell: {
+      output: {
+        dir: 'deps/atom-shell'
+      }
+    }
+  },
+  dist: {
+    dir: 'dist',
+    app: {
+      dir: {
+        mac: 'dist/Atom.app/Contents/MacOS/atom',
+        others: 'dist/atom-shell/atom'
+      },
+      resources: {
+        dir: {
+          mac: 'dist/Atom.app/Contents/Resources/app',
+          others: 'dist/atom-shell/resources/app'
+        }
+      }
+    }
+  },
+  lib: {
+    dir: 'lib',
+    react: {
+      dir: 'lib/react'
+    }
+  },
+  package: {
+    file: 'package.json'
+  },
+  static: {
+    dir: 'static',
+    react: {
+      glob: 'lib/react/**/*.jsx'
+    },
+    styles: {
+      dir: 'static/styles',
+      glob: 'static/styles/**/*.less'
+    }
+  }
 };
 
 gulp.task('default', ['run']);
@@ -52,11 +88,11 @@ gulp.task('clean', function (callback) {
   };
 
   var fns = [];
-  fns.push(rm('build'));
-  fns.push(rm('dist'));
+  fns.push(rm(paths.build.dir));
+  fns.push(rm(paths.dist.dir));
   if (argv.deps) {
-    fns.push(rm('cache'));
-    fns.push(rm('dep'));
+    fns.push(rm(paths.cache.dir));
+    fns.push(rm(paths.deps.dir));
   }
 
   async.parallel(fns, callback);
@@ -64,8 +100,8 @@ gulp.task('clean', function (callback) {
 
 gulp.task('download-atom-shell', function (callback) {
   async.map([
-    paths.atomShell.downloadDir,
-    paths.atomShell.outputDir
+    paths.cache.atomShell.download.dir,
+    paths.deps.atomShell.output.dir
   ], mkdirp, function (err) {
     if (err) {
       return callback(err);
@@ -74,8 +110,8 @@ gulp.task('download-atom-shell', function (callback) {
     standaloneGruntRunner('download-atom-shell', {
       config: {
         version: atomShellVersion,
-        downloadDir: paths.atomShell.downloadDir,
-        outputDir: paths.atomShell.outputDir
+        downloadDir: paths.cache.atomShell.download.dir,
+        outputDir: paths.deps.atomShell.output.dir
       },
       npm: 'grunt-download-atom-shell'
     }, function () {
@@ -85,9 +121,9 @@ gulp.task('download-atom-shell', function (callback) {
 });
 
 gulp.task('less', function () {
-  return gulp.src(paths.styles, {base: paths.staticDir})
+  return gulp.src(paths.static.styles.glob)
     .pipe(less())
-    .pipe(gulp.dest(paths.buildDir));
+    .pipe(gulp.dest(paths.build.styles.dir));
 });
 
 gulp.task('package', ['build'], function (callback) {
@@ -106,16 +142,16 @@ gulp.task('package', ['build'], function (callback) {
     };
   };
 
-  ncp(paths.atomShell.outputDir, paths.distDir, function (err) {
+  ncp(paths.deps.atomShell.output.dir, paths.dist.dir, function (err) {
     if (err) {
       return callback(err);
     }
 
     var distDir;
     if (process.platform === 'darwin') {
-      distDir = paths.resourcesDir.mac;
+      distDir = paths.dist.app.resources.dir.mac;
     } else {
-      distDir = paths.resourcesDir.others;
+      distDir = paths.dist.app.resources.dir.others;
     }
 
     mkdirp(distDir, function (err) {
@@ -123,48 +159,48 @@ gulp.task('package', ['build'], function (callback) {
         return callback(err);
       }
 
-      copy(paths.package, distDir);
+      copy(paths.package.file, distDir);
 
       async.series([
-        copyDir(paths.libDir, path.join(distDir, 'lib'), {
+        copyDir(paths.lib.dir, path.join(distDir, 'lib'), {
           filter: function (file) {
             // Don't copy the react folder.
-            if (file.match(/\/react$/)) {
+            if (file.match(new RegExp('/' + paths.lib.react.dir + '$'))) {
               return false;
             }
 
             return true;
           }
         }),
-        copyDir(paths.build.reactDir, path.join(distDir, 'lib/react')),
-        copyDir(paths.staticDir, path.join(distDir, 'static'), {
+        copyDir(paths.build.react.dir, path.join(distDir, 'lib/react')),
+        copyDir(paths.static.dir, path.join(distDir, 'static'), {
           filter: function (file) {
             // Don't copy the styles folder.
-            if (file.match(/\/styles$/)) {
+            if (file.match(new RegExp('/' + paths.static.styles.dir + '$'))) {
               return false;
             }
 
             return true;
           }
         }),
-        copyDir(paths.build.stylesDir, path.join(distDir, 'static/styles'))
+        copyDir(paths.build.styles.dir, path.join(distDir, 'static/styles'))
       ], callback);
     });
   });
 });
 
 gulp.task('react', function () {
-  return gulp.src(paths.react)
+  return gulp.src(paths.static.react.glob)
     .pipe(react())
-    .pipe(gulp.dest(paths.build.reactDir));
+    .pipe(gulp.dest(paths.build.react.dir));
 });
 
 gulp.task('run', ['download-atom-shell', 'package'], function () {
   var distApp;
   if (process.platform === 'darwin') {
-    distApp = paths.distApp.mac;
+    distApp = paths.dist.app.dir.mac;
   } else {
-    distApp = paths.distApp.others;
+    distApp = paths.dist.app.dir.others;
   }
 
   spawn(distApp, [], {
