@@ -9,6 +9,7 @@
     "async": "^0.8.0",
     "grunt-download-atom-shell": "^0.7.0",
     "gulp": "^3.6.2",
+    "gulp-less": "^1.2.3",
     "gulp-react": "^0.3.3",
     "mkdirp": "^0.5.0",
     "ncp": "^0.5.1",

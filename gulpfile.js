@@ -2,6 +2,7 @@
 
 var async = require('async');
 var gulp = require('gulp');
+var less = require('gulp-less');
 var mkdirp = require('mkdirp');
 var ncp = require('ncp');
 var path = require('path');
@@ -21,7 +22,8 @@ var paths = {
   },
   buildDir: 'build',
   build: {
-    reactDir: 'build/react'
+    reactDir: 'build/react',
+    stylesDir: 'build/styles'
   },
   distDir: 'dist',
   libDir: 'lib',
@@ -31,6 +33,7 @@ var paths = {
     others: 'dist/atom-shell/resources/app'
   },
   staticDir: 'static',
+  styles: 'static/styles/**/*.less',
   react: 'lib/react/**/*.jsx'
 };
 
@@ -58,7 +61,13 @@ gulp.task('download-atom-shell', function (callback) {
   });
 });
 
-gulp.task('package', ['download-atom-shell', 'react'], function (callback) {
+gulp.task('less', function () {
+  return gulp.src(paths.styles, {base: paths.staticDir})
+    .pipe(less())
+    .pipe(gulp.dest(paths.buildDir));
+});
+
+gulp.task('package', ['download-atom-shell', 'react', 'less'], function (callback) {
   var copy = function (src, dest) {
     return gulp.src(src)
       .pipe(gulp.dest(dest));
@@ -105,7 +114,17 @@ gulp.task('package', ['download-atom-shell', 'react'], function (callback) {
           }
         }),
         copyDir(paths.build.reactDir, path.join(distDir, 'lib/react')),
-        copyDir(paths.staticDir, path.join(distDir, 'static'))
+        copyDir(paths.staticDir, path.join(distDir, 'static'), {
+          filter: function (file) {
+            // Don't copy the styles folder.
+            if (file.match(/\/styles$/)) {
+              return false;
+            }
+
+            return true;
+          }
+        }),
+        copyDir(paths.build.stylesDir, path.join(distDir, 'static/styles'))
       ], callback);
     });
   });
