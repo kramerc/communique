@@ -1,5 +1,7 @@
 'use strict';
 
+var argv = require('minimist')(process.argv.slice(2));
+
 var async = require('async');
 var gulp = require('gulp');
 var less = require('gulp-less');
@@ -7,6 +9,7 @@ var mkdirp = require('mkdirp');
 var ncp = require('ncp');
 var path = require('path');
 var react = require('gulp-react');
+var rimraf = require('rimraf');
 var spawn = require('child_process').spawn;
 var standaloneGruntRunner = require('standalone-grunt-runner');
 
@@ -39,6 +42,26 @@ var paths = {
 
 gulp.task('default', ['run']);
 
+gulp.task('build', ['download-atom-shell', 'react', 'less']);
+
+gulp.task('clean', function (callback) {
+  var rm = function (file) {
+    return function (cb) {
+      rimraf(file, cb);
+    };
+  };
+
+  var fns = [];
+  fns.push(rm('build'));
+  fns.push(rm('dist'));
+  if (argv.deps) {
+    fns.push(rm('cache'));
+    fns.push(rm('dep'));
+  }
+
+  async.parallel(fns, callback);
+});
+
 gulp.task('download-atom-shell', function (callback) {
   async.map([
     paths.atomShell.downloadDir,
@@ -67,7 +90,7 @@ gulp.task('less', function () {
     .pipe(gulp.dest(paths.buildDir));
 });
 
-gulp.task('package', ['download-atom-shell', 'react', 'less'], function (callback) {
+gulp.task('package', ['build'], function (callback) {
   var copy = function (src, dest) {
     return gulp.src(src)
       .pipe(gulp.dest(dest));
