@@ -4,7 +4,17 @@
 
 var React = require('react');
 
+var Messages = require('./messages');
+
+var Communique = React.createClass({
+  render: function () {
+    return (
+      <Messages />
+    );
+  }
+});
+
 React.renderComponent(
-  <h1>Communiqué</h1>,
+  <Communique />,
   document.body
 );
