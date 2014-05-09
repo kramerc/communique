@@ -1,3 +1,5 @@
+/** @jsx React.DOM */
+
 'use strict';
 
 var ipc = require('ipc');
