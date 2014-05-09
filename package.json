@@ -7,6 +7,7 @@
     "grunt-download-atom-shell": "^0.7.0",
     "gulp": "^3.6.2",
     "mkdirp": "^0.5.0",
+    "ncp": "^0.5.1",
     "standalone-grunt-runner": "0.0.1"
   }
 }

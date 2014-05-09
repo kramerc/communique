@@ -1,3 +1,4 @@
 cache/
 dep/
+dist/
 node_modules/
