@@ -3,49 +3,8 @@
 var ipc = require('ipc');
 var React = require('react');
 
-var Message = React.createClass({
-  render: function () {
-    return (
-      <li className="message">
-        <span className="nick">{this.props.nick}</span>
-        {this.props.children.toString()}
-      </li>
-    );
-  }
-});
-
-var MessageList = React.createClass({
-  render: function () {
-    var messageNodes = this.props.data.map(function (message) {
-      return <Message nick={message.from}>{message.message}</Message>;
-    });
-
-    return (
-      <ul>
-        {messageNodes}
-      </ul>
-    );
-  }
-});
-
-var MessageForm = React.createClass({
-  handleSubmit: function () {
-    var message = this.refs.message.getDOMNode().value;
-    this.props.onMessageSubmit(message);
-
-    // Clear the form
-    this.refs.message.getDOMNode().value = '';
-
-    return false;
-  },
-  render: function () {
-    return (
-      <form className="message-form" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="Type a message..." ref="message" />
-      </form>
-    );
-  }
-});
+var MessageList = require('./message-list');
+var MessageForm = require('./message-form');
 
 var Messages = React.createClass({
   handleMessageSubmit: function (message) {
