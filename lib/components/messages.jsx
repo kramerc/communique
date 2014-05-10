@@ -15,14 +15,18 @@ var Messages = React.createClass({
   },
   handleMessageSubmit: function (message) {
     var messageData = {
-      from: 'Communique',
+      timestamp: Date.now(),
+      from: 'Communique', // TODO: Use nick reference when implemented
       message: message,
-      to: '#communique'
+      to: this.props.buffer.name
     };
     var newMessages = this.state.data.concat([messageData]);
 
     this.setState({data: newMessages});
-    ipc.send('irc', messageData);
+    ipc.send('message:send', {
+      buffer: this.props.buffer,
+      message: messageData.message
+    });
   },
   getInitialState: function () {
     return {
