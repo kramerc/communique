@@ -1,0 +1,36 @@
+ul.buffer-list {
+  display: block;
+  float: left;
+  height: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 200px;
+
+  li.parent {
+    span {
+      display: block;
+      padding: 4px;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        display: block;
+        padding: 4px 4px 4px 16px;
+
+        &.active, &:hover {
+          background-color: #CCCCCC;
+        }
+      }
+    }
+  }
+}
+
+div.buffer {
+  height: 100%;
+  overflow: auto;
+}

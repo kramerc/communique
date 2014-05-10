@@ -7,6 +7,12 @@ var MessageList = require('./message-list');
 var MessageForm = require('./message-form');
 
 var Messages = React.createClass({
+  messageReceivedListener: function (event) {
+    if (event.buffer.parent === this.props.buffer.parent &&
+        event.buffer.name === this.props.buffer.name) {
+      this.setState({data: this.state.data.concat([event.message])});
+    }
+  },
   handleMessageSubmit: function (message) {
     var messageData = {
       from: 'Communique',
@@ -24,12 +30,10 @@ var Messages = React.createClass({
     };
   },
   componentWillMount: function () {
-    var self = this;
-
-    ipc.on('irc', function (message) {
-      var newMessages = self.state.data.concat([message]);
-      self.setState({data: newMessages});
-    });
+    ipc.on('message:received', this.messageReceivedListener);
+  },
+  componentWillUnmount: function () {
+    ipc.removeListener('message:received', this.messageReceivedListener);
   },
   render: function () {
     return (

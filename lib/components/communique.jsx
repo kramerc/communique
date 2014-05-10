@@ -2,12 +2,12 @@
 
 var React = require('react');
 
-var Messages = require('./messages');
+var BufferFrame = require('./buffer-frame');
 
 var Communique = React.createClass({
   render: function () {
     return (
-      <Messages />
+      <BufferFrame />
     );
   }
 });
