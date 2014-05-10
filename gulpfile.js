@@ -70,9 +70,6 @@ var paths = {
   },
   static: {
     dir: 'static',
-    react: {
-      glob: 'lib/react/**/*.jsx'
-    },
     styles: {
       dir: 'static/styles',
       glob: 'static/styles/**/*.less'
@@ -214,7 +211,7 @@ gulp.task('package', ['build'], function (callback) {
 });
 
 gulp.task('react', function () {
-  return gulp.src(paths.static.react.glob)
+  return gulp.src(paths.lib.react.glob)
     .pipe(react())
     .pipe(gulp.dest(paths.build.react.dir));
 });
