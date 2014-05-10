@@ -4,6 +4,7 @@ var argv = require('minimist')(process.argv.slice(2));
 
 var async = require('async');
 var gulp = require('gulp');
+var jshint = require('gulp-jshint');
 var less = require('gulp-less');
 var mkdirp = require('mkdirp');
 var ncp = require('ncp');
@@ -18,7 +19,8 @@ var paths = {
   build: {
     dir: 'build',
     react: {
-      dir: 'build/react'
+      dir: 'build/react',
+      glob: 'build/react/**/*'
     },
     styles: {
       dir: 'build/styles'
@@ -57,8 +59,10 @@ var paths = {
   },
   lib: {
     dir: 'lib',
+    glob: 'lib/**/*.js',
     react: {
-      dir: 'lib/react'
+      dir: 'lib/react',
+      glob: 'lib/react/**/*.jsx'
     }
   },
   package: {
@@ -78,7 +82,7 @@ var paths = {
 
 gulp.task('default', ['run']);
 
-gulp.task('build', ['download-atom-shell', 'react', 'less']);
+gulp.task('build', ['download-atom-shell', 'react', 'jshint', 'less']);
 
 gulp.task('clean', function (callback) {
   var rm = function (file) {
@@ -118,6 +122,26 @@ gulp.task('download-atom-shell', function (callback) {
       callback();
     });
   });
+});
+
+gulp.task('jshint', ['jshint-lib', 'jshint-react']);
+
+gulp.task('jshint-lib', function () {
+  return gulp.src(paths.lib.glob)
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('jshint-react', ['react'], function () {
+  return gulp.src(paths.build.react.glob)
+    .pipe(jshint({
+      latedef: true,
+      maxlen: false,
+      newcap: false,
+      quotmark: false,
+      strict: false,
+    }))
+    .pipe(jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('less', function () {
