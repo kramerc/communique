@@ -5,6 +5,7 @@ var React = require('react');
 
 var MessageList = require('./message-list');
 var MessageForm = require('./message-form');
+var utils = require('../utils');
 
 var Messages = React.createClass({
   messageReceivedListener: function (event) {
@@ -22,7 +23,11 @@ var Messages = React.createClass({
     };
     var newMessages = this.state.data.concat([messageData]);
 
-    this.setState({data: newMessages});
+    // Don't echo commands verbatim to the buffer
+    if (!utils.isCommand(message)) {
+      this.setState({data: newMessages});
+    }
+
     ipc.send('message:send', {
       buffer: this.props.buffer,
       message: messageData.message

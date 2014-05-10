@@ -54,7 +54,7 @@ var BufferFrame = React.createClass({
     }]);
 
     this.setState({buffers: newBuffers});
-    if (this.state.active === -1) {
+    if (this.state.active === -1 || buffer.switch) {
       this.setActive(buffer);
     }
   },
