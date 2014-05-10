@@ -18,9 +18,9 @@ var atomShellVersion = '0.12.3';
 var paths = {
   build: {
     dir: 'build',
-    react: {
-      dir: 'build/react',
-      glob: 'build/react/**/*'
+    components: {
+      dir: 'build/components',
+      glob: 'build/components/**/*'
     },
     styles: {
       dir: 'build/styles'
@@ -60,9 +60,9 @@ var paths = {
   lib: {
     dir: 'lib',
     glob: 'lib/**/*.js',
-    react: {
-      dir: 'lib/react',
-      glob: 'lib/react/**/*.jsx'
+    components: {
+      dir: 'lib/components',
+      glob: 'lib/components/**/*.jsx'
     }
   },
   package: {
@@ -130,7 +130,7 @@ gulp.task('jshint-lib', function () {
 });
 
 gulp.task('jshint-react', ['react'], function () {
-  return gulp.src(paths.build.react.glob)
+  return gulp.src(paths.build.components.glob)
     .pipe(jshint({
       latedef: true,
       maxlen: false,
@@ -185,15 +185,16 @@ gulp.task('package', ['build'], function (callback) {
       async.series([
         copyDir(paths.lib.dir, path.join(distDir, 'lib'), {
           filter: function (file) {
-            // Don't copy the react folder.
-            if (file.match(new RegExp('/' + paths.lib.react.dir + '$'))) {
+            // Don't copy the components folder.
+            if (file.match(new RegExp('/' + paths.lib.components.dir + '$'))) {
               return false;
             }
 
             return true;
           }
         }),
-        copyDir(paths.build.react.dir, path.join(distDir, 'lib/react')),
+        copyDir(paths.build.components.dir,
+          path.join(distDir, 'lib/components')),
         copyDir(paths.static.dir, path.join(distDir, 'static'), {
           filter: function (file) {
             // Don't copy the styles folder.
@@ -211,9 +212,9 @@ gulp.task('package', ['build'], function (callback) {
 });
 
 gulp.task('react', function () {
-  return gulp.src(paths.lib.react.glob)
+  return gulp.src(paths.lib.components.glob)
     .pipe(react())
-    .pipe(gulp.dest(paths.build.react.dir));
+    .pipe(gulp.dest(paths.build.components.dir));
 });
 
 gulp.task('run', ['download-atom-shell', 'package'], function () {
