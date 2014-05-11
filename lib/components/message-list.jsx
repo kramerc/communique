@@ -7,7 +7,13 @@ var Message = require('./message');
 var MessageList = React.createClass({
   render: function () {
     var messageNodes = this.props.data.map(function (message) {
-      return <Message nick={message.from}>{message.message}</Message>;
+      return (
+        <Message
+            timestamp={message.timestamp}
+            nick={message.from}>
+          {message.message}
+        </Message>
+      );
     });
 
     return (

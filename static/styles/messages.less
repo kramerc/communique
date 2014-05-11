@@ -5,7 +5,21 @@ div.messages {
     padding: 0;
 
     li.message {
+      span.timestamp {
+        &:before {
+          content: '[';
+        }
+
+        &:after {
+          content: '] ';
+        }
+      }
+
       span.nick {
+        &:empty {
+          display: none;
+        }
+
         &:before {
           content: '<';
         }

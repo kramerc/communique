@@ -22,7 +22,7 @@ var BufferListParent = React.createClass({
     });
 
     return (
-      <li className="parent">
+      <li className="parent" data-default={this.props.parent === 'default'}>
         {this.props.parent}
         <ul>
           {childrenNodes}

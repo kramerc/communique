@@ -27,6 +27,18 @@ ul.buffer-list {
         }
       }
     }
+
+    // 'default' is considered to be a pseudo-parent. Have its children look
+    // like they're not apart of a group.
+    &[data-default="true"] {
+      span {
+        display: none;
+      }
+
+      li {
+        padding: 4px;
+      }
+    }
   }
 }
 
