@@ -23,6 +23,14 @@ var BufferList = React.createClass({
     });
     return children;
   },
+  isParentActive: function (children) {
+    for (var i = 0; i < children.length; i++) {
+      if (children[i].name === 'server' && children[i].active) {
+        return true;
+      }
+    }
+    return false;
+  },
   handleBufferClick: function (buffer) {
     this.props.onBufferClick(buffer);
   },
@@ -34,6 +42,7 @@ var BufferList = React.createClass({
         <BufferListParent
             parent={parent}
             buffers={children}
+            active={self.isParentActive(children)}
             onBufferClick={self.handleBufferClick} />
       );
     });

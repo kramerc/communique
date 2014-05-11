@@ -9,9 +9,10 @@ var BufferListChild = React.createClass({
   render: function () {
     var buffer = this.props.buffer;
     return (
-      <li className={buffer.active ? 'active' : undefined}
+      <li className={buffer.active ? 'active' : null}
+          data-server={this.props.buffer.name === 'server'}
           onClick={this.handleClick}>
-        {buffer.displayName}
+        <span>{buffer.displayName}</span>
       </li>
     );
   }

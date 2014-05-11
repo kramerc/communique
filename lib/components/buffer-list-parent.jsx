@@ -8,6 +8,13 @@ var BufferListParent = React.createClass({
   handleChildClick: function (buffer) {
     this.props.onBufferClick(buffer);
   },
+  handleClick: function () {
+    // Act like the server buffer was clicked
+    this.handleChildClick({
+      parent: this.props.parent,
+      name: 'server'
+    });
+  },
   render: function () {
     var self = this;
     var childrenNodes = this.props.buffers.map(function (buffer) {
@@ -22,8 +29,9 @@ var BufferListParent = React.createClass({
     });
 
     return (
-      <li className="parent" data-default={this.props.parent === 'default'}>
-        {this.props.parent}
+      <li className={this.props.active ? 'active' : null}
+          data-default={this.props.parent === 'default'}>
+        <span onClick={this.handleClick}>{this.props.parent}</span>
         <ul>
           {childrenNodes}
         </ul>

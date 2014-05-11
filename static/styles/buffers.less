@@ -7,10 +7,14 @@ ul.buffer-list {
   padding: 0;
   width: 200px;
 
-  li.parent {
+  li {
     span {
       display: block;
       padding: 4px;
+    }
+
+    &.active > span, > span:hover {
+      background-color: #CCCCCC;
     }
 
     ul {
@@ -20,10 +24,14 @@ ul.buffer-list {
 
       li {
         display: block;
-        padding: 4px 4px 4px 16px;
 
-        &.active, &:hover {
-          background-color: #CCCCCC;
+        span {
+          padding: 4px 4px 4px 16px;
+        }
+
+        // The server buffer is melded into the parent
+        &[data-server="true"] {
+          display: none;
         }
       }
     }
@@ -31,11 +39,11 @@ ul.buffer-list {
     // 'default' is considered to be a pseudo-parent. Have its children look
     // like they're not apart of a group.
     &[data-default="true"] {
-      span {
+      > span {
         display: none;
       }
 
-      li {
+      ul li span {
         padding: 4px;
       }
     }
