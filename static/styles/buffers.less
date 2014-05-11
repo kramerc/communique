@@ -1,56 +1,59 @@
-ul.buffer-list {
-  display: block;
-  float: left;
+div.buffer-frame {
+  display: flex;
   height: 100%;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 200px;
 
-  li {
-    span {
-      display: block;
-      padding: 4px;
-    }
+  ul.buffer-list {
+    height: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 200px;
 
-    &.active > span, > span:hover {
-      background-color: #CCCCCC;
-    }
-
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-
-      li {
+    li {
+      span {
         display: block;
+        padding: 4px;
+      }
 
-        span {
-          padding: 4px 4px 4px 16px;
+      &.active > span, > span:hover {
+        background-color: #CCCCCC;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+          display: block;
+
+          span {
+            padding: 4px 4px 4px 16px;
+          }
+
+          // The server buffer is melded into the parent
+          &[data-server="true"] {
+            display: none;
+          }
         }
+      }
 
-        // The server buffer is melded into the parent
-        &[data-server="true"] {
+      // 'default' is considered to be a pseudo-parent. Have its children look
+      // like they're not apart of a group.
+      &[data-default="true"] {
+        > span {
           display: none;
         }
-      }
-    }
 
-    // 'default' is considered to be a pseudo-parent. Have its children look
-    // like they're not apart of a group.
-    &[data-default="true"] {
-      > span {
-        display: none;
-      }
-
-      ul li span {
-        padding: 4px;
+        ul li span {
+          padding: 4px;
+        }
       }
     }
   }
-}
 
-div.buffer {
-  height: 100%;
-  overflow: auto;
+  div.buffer {
+    height: 100%;
+    width: 100%;
+  }
 }
