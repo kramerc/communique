@@ -7,13 +7,15 @@ var Message = React.createClass({
   render: function () {
     return (
       <li className="message">
-        <span className="timestamp">
-          {strftime('%H:%M:%S', new Date(this.props.timestamp))}
-        </span>
-        <span className="nick">
-          {this.props.nick}
-        </span>
-        {this.props.children.toString()}
+        <pre>
+          <span className="timestamp">
+            {strftime('%H:%M:%S', new Date(this.props.timestamp))}
+          </span>
+          <span className="nick">
+            {this.props.nick}
+          </span>
+          {this.props.children.toString()}
+        </pre>
       </li>
     );
   }
