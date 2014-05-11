@@ -11,7 +11,7 @@ var BufferListChild = React.createClass({
     return (
       <li className={buffer.active ? 'active' : undefined}
           onClick={this.handleClick}>
-        {buffer.name}
+        {buffer.displayName}
       </li>
     );
   }

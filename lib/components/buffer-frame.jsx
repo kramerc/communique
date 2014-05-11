@@ -50,7 +50,8 @@ var BufferFrame = React.createClass({
   bufferCreateListener: function (buffer) {
     var newBuffers = this.state.buffers.concat([{
       parent: buffer.parent,
-      name: buffer.name
+      name: buffer.name,
+      displayName: buffer.displayName
     }]);
 
     this.setState({buffers: newBuffers});
