@@ -72,7 +72,7 @@ var paths = {
     dir: 'static',
     styles: {
       dir: 'static/styles',
-      glob: 'static/styles/**/*.less'
+      main: 'static/styles/main.less'
     }
   }
 };
@@ -142,7 +142,7 @@ gulp.task('jshint-react', ['react'], function () {
 });
 
 gulp.task('less', function () {
-  return gulp.src(paths.static.styles.glob)
+  return gulp.src(paths.static.styles.main)
     .pipe(less())
     .pipe(gulp.dest(paths.build.styles.dir));
 });
