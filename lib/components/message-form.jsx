@@ -12,10 +12,22 @@ var MessageForm = React.createClass({
 
     return false;
   },
+  componentDidMount: function () {
+    // Auto focus fix
+    var node = this.refs.message.getDOMNode();
+    if (node.ownerDocument.activeElement !== node) {
+      setTimeout(function () {
+        node.focus();
+      }, 0);
+    }
+  },
   render: function () {
     return (
       <form className="message-form" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="Type a message..." ref="message" />
+        <input type="text"
+            placeholder="Type a message..."
+            ref="message"
+            autoFocus="true" />
       </form>
     );
   }
