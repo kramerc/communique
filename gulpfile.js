@@ -14,7 +14,7 @@ var rimraf = require('rimraf');
 var spawn = require('child_process').spawn;
 var standaloneGruntRunner = require('standalone-grunt-runner');
 
-var atomShellVersion = '0.12.3';
+var atomShellVersion = '0.12.4';
 var paths = {
   build: {
     dir: 'build',
