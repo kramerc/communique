@@ -23,9 +23,21 @@ var Messages = React.createClass({
     };
     var newMessages = this.state.data.concat([messageData]);
 
-    // Don't echo commands verbatim to the buffer
     if (!utils.isCommand(message)) {
+      // Don't echo commands verbatim to the buffer
       this.setState({data: newMessages});
+    } else {
+      // Fill in the channel argument for certain commands if omitted
+      var args = message.split(' ');
+      var command = args.splice(0, 1)[0].substring(1).toLowerCase();
+
+      if (args.length === 0) {
+        switch (command) {
+        case 'part':
+          messageData.message += ' ' + this.props.buffer.name;
+          break;
+        }
+      }
     }
 
     ipc.send('message:send', {
