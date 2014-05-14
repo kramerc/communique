@@ -4,7 +4,7 @@
   "main": "lib/browser/main.js",
   "dependencies": {
     "react": "^0.10.0",
-    "slate-irc": "^0.5.0",
+    "slate-irc": "git://github.com/kramerc/slate-irc.git",
     "strftime": "^0.8.0"
   },
   "devDependencies": {
