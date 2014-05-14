@@ -2,6 +2,7 @@
   "name": "communique",
   "version": "0.0.0",
   "main": "lib/browser/main.js",
+  "atomShellVersion": "0.12.4",
   "dependencies": {
     "react": "^0.10.0",
     "slate-irc": "git://github.com/kramerc/slate-irc.git",

@@ -14,7 +14,6 @@ var rimraf = require('rimraf');
 var spawn = require('child_process').spawn;
 var standaloneGruntRunner = require('standalone-grunt-runner');
 
-var atomShellVersion = '0.12.4';
 var paths = {
   build: {
     dir: 'build',
@@ -76,6 +75,8 @@ var paths = {
     }
   }
 };
+var pkg = require('./' + paths.package.file);
+var atomShellVersion = pkg.atomShellVersion;
 
 gulp.task('default', ['run']);
 
