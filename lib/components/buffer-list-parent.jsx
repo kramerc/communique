@@ -16,7 +16,6 @@ var BufferListParent = React.createClass({
     });
   },
   render: function () {
-    var self = this;
     var childrenNodes = this.props.buffers.map(function (buffer) {
       var bufferKey = buffer.parent + '-' + buffer.name;
 
@@ -24,9 +23,9 @@ var BufferListParent = React.createClass({
         <BufferListChild
             key={bufferKey}
             buffer={buffer}
-            onBufferClick={self.handleChildClick} />
+            onBufferClick={this.handleChildClick} />
       );
-    });
+    }.bind(this));
 
     return (
       <li className={this.props.active ? 'active' : null}

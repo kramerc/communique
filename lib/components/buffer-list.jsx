@@ -35,17 +35,16 @@ var BufferList = React.createClass({
     this.props.onBufferClick(buffer);
   },
   render: function () {
-    var self = this;
     var parentNodes = this.getParents().map(function (parent) {
-      var children = self.getBuffersBelongingTo(parent);
+      var children = this.getBuffersBelongingTo(parent);
       return (
         <BufferListParent
             parent={parent}
             buffers={children}
-            active={self.isParentActive(children)}
-            onBufferClick={self.handleBufferClick} />
+            active={this.isParentActive(children)}
+            onBufferClick={this.handleBufferClick} />
       );
-    });
+    }.bind(this));
 
     return (
       <ul className="buffer-list">{parentNodes}</ul>
