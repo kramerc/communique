@@ -44,7 +44,7 @@ var paths = {
   dist: {
     dir: 'dist',
     app: {
-      dir: {
+      executable: {
         mac: 'dist/Atom.app/Contents/MacOS/atom',
         others: 'dist/atom'
       },
@@ -221,9 +221,9 @@ gulp.task('react', function () {
 gulp.task('run', ['download-atom-shell', 'package'], function () {
   var distApp;
   if (process.platform === 'darwin') {
-    distApp = paths.dist.app.dir.mac;
+    distApp = paths.dist.app.executable.mac;
   } else {
-    distApp = paths.dist.app.dir.others;
+    distApp = paths.dist.app.executable.others;
   }
 
   spawn(distApp, [], {
