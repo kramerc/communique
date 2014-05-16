@@ -46,12 +46,12 @@ var paths = {
     app: {
       dir: {
         mac: 'dist/Atom.app/Contents/MacOS/atom',
-        others: 'dist/atom-shell/atom'
+        others: 'dist/atom'
       },
       resources: {
         dir: {
           mac: 'dist/Atom.app/Contents/Resources/app',
-          others: 'dist/atom-shell/resources/app'
+          others: 'dist/resources/app'
         }
       }
     }
