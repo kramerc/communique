@@ -8,10 +8,10 @@ var MessageForm = require('./message-form');
 var utils = require('../utils');
 
 var Messages = React.createClass({
-  messageReceivedListener: function (event) {
-    if (event.buffer.parent === this.props.buffer.parent &&
-        event.buffer.name === this.props.buffer.name) {
-      this.setState({data: this.state.data.concat([event.message])});
+  bufferMessageListener: function (buffer, message) {
+    if (buffer.parent === this.props.buffer.parent &&
+        buffer.name === this.props.buffer.name) {
+      this.setState({data: this.state.data.concat([message])});
     }
   },
   handleMessageSubmit: function (message) {
@@ -40,7 +40,7 @@ var Messages = React.createClass({
       }
     }
 
-    ipc.send('message:send', {
+    ipc.send('buffer:input', {
       buffer: this.props.buffer,
       message: messageData.message
     });
@@ -51,10 +51,10 @@ var Messages = React.createClass({
     };
   },
   componentWillMount: function () {
-    ipc.on('message:received', this.messageReceivedListener);
+    ipc.on('buffer:message', this.bufferMessageListener);
   },
   componentWillUnmount: function () {
-    ipc.removeListener('message:received', this.messageReceivedListener);
+    ipc.removeListener('buffer:message', this.bufferMessageListener);
   },
   render: function () {
     return (

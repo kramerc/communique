@@ -48,16 +48,8 @@ var BufferFrame = React.createClass({
     });
   },
   bufferCreateListener: function (buffer) {
-    var newBuffers = this.state.buffers.concat([{
-      parent: buffer.parent,
-      name: buffer.name,
-      displayName: buffer.displayName
-    }]);
-
+    var newBuffers = this.state.buffers.concat([buffer]);
     this.setState({buffers: newBuffers});
-    if (this.state.active === -1 || buffer.switch) {
-      this.setActive(buffer);
-    }
   },
   bufferDeleteListener: function (buffer) {
     var newBuffers = this.state.buffers;
@@ -77,6 +69,9 @@ var BufferFrame = React.createClass({
     newBuffers.splice(bufferIndex, 1);
     this.setState({buffers: newBuffers});
   },
+  bufferSwitchListener: function (buffer) {
+    this.setActive(buffer);
+  },
   handleBufferClick: function (buffer) {
     this.setActive(buffer);
   },
@@ -89,10 +84,12 @@ var BufferFrame = React.createClass({
   componentWillMount: function () {
     ipc.on('buffer:create', this.bufferCreateListener);
     ipc.on('buffer:delete', this.bufferDeleteListener);
+    ipc.on('buffer:switch', this.bufferSwitchListener);
   },
   componentWillUnmount: function () {
     ipc.removeListener('buffer:create', this.bufferCreateListener);
     ipc.removeListener('buffer:delete', this.bufferDeleteListener);
+    ipc.removeListener('buffer:switch', this.bufferSwitchListener);
   },
   render: function () {
     var bufferNodes = this.state.buffers.map(function (buffer) {
