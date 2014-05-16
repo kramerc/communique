@@ -2,6 +2,11 @@
   "name": "communique",
   "version": "0.0.0",
   "main": "lib/browser/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kramerc/communique.git"
+  },
+  "license": "MIT",
   "atomShellVersion": "0.12.4",
   "dependencies": {
     "react": "^0.10.0",
