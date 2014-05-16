@@ -22,51 +22,149 @@ var colorCodes = [
   '#CCCCCC'  // 15: silver
 ];
 
+var controlChars = {
+  bold: '\x02',
+  color: '\x03',
+  reset: '\x0F',
+  italics: '\x1D',
+  reverse: '\x12',
+  underline: '\x15',
+  regEx: /\x02|\x03|\x0F|\x1D|\x12|\x15/,
+  formatEx: /(\x02|\x0F|\x1D|\x12|\x15)(.+?([\x02|\x0F|\x1D|\x12|\x15].+)|.+)/
+};
+
 var Message = React.createClass({
   render: function () {
     var parseMessage = function (message) {
-      var parsed = [];
+      var hasFormatControlChars = function (str) {
+        return str.indexOf(controlChars.bold) > -1 ||
+               str.indexOf(controlChars.italics) > -1 ||
+               str.indexOf(controlChars.reverse) > -1 ||
+               str.indexOf(controlChars.underline) > -1;
+      };
 
-      // Parse color codes
-      var bits = message.split('\x03');
+      var format = function (str) {
+        var formatted = [];
 
-      // Anything left of the control character is certainly not containing any
-      // color codes
-      var beginning = bits.splice(0, 1)[0];
-      if (beginning !== '') {
-        parsed.push(<span>{beginning}</span>);
-      }
+        // Match format codes
+        var matches = str.match(controlChars.formatEx);
 
-      // Go through bit by bit
-      bits.forEach(function (bit) {
-        var matches = bit.match(/(\d+),?(\d+)?/);
         if (!matches) {
-          // No color codes found
+          // No format codes to handle
+          return [];
+        }
+
+        // Remove the next bit that was picked up in the match before it
+        var bit = matches[2].replace(matches[3], '');
+
+        switch (matches[1]) {
+        case controlChars.bold:
+          formatted.push(<span style={{fontWeight: 'bold'}}>{bit}</span>);
+          break;
+        case controlChars.italics:
+          formatted.push(<span style={{fontStyle: 'italic'}}>{bit}</span>);
+          break;
+        case controlChars.reverse:
+          // As this requires knowledge of the colors, the component for this is
+          // set later
+          formatted.push({bit: bit, reverse: true});
+          break;
+        case controlChars.underline:
+          formatted.push(
+            <span style={{textDecoration: 'underline'}}>{bit}</span>
+          );
+          break;
+        }
+
+        if (matches[3]) {
+          // But wait, there's more!
+          formatted = formatted.concat(format(matches[3]));
+        }
+
+        return formatted;
+      };
+
+      var parse = function (bits) {
+        var parsed = [];
+        var bit = bits.shift();
+        var style = {};
+        var msgBits, formatBits, formatted;
+
+        // Match color codes
+        var colorMatches = bit.string.match(/(\d+),?(\d+)?/);
+
+        if (!colorMatches && !hasFormatControlChars(bit.string)) {
+          // No color or format codes found
           if (bit !== '') {
             // Pass along the message bit
             parsed.push(<span>{bit}</span>);
           }
-          return;
+        } else {
+          // Handle format clearing control character by splitting
+          msgBits = bit.string.split(controlChars.reset);
+          if (msgBits[1]) {
+            // Pass the right side off to the next recursion
+            bits.unshift({string: msgBits[1]});
+          }
+
+          // Handle color codes
+          if (bit.colors && colorMatches) {
+            // Remove color codes
+            msgBits[0] = msgBits[0].replace(colorMatches[0], '');
+
+            style = {
+              color: colorCodes[parseInt(colorMatches[1])],
+              backgroundColor: colorCodes[parseInt(colorMatches[2])]
+            };
+          }
+
+          // Handle format codes
+          formatBits = msgBits[0].split(controlChars.regEx);
+          formatted = format(msgBits[0]);
+
+          if (formatted.length > 0) {
+            // Finish handling reversed
+            formatted.forEach(function (element, index) {
+              var reversedStyle;
+
+              if (element.constructor.name === 'Object' && element.reverse) {
+                // Swap the background and foreground colors
+                reversedStyle = {
+                  color: style.backgroundColor || '#FFFFFF',
+                  backgroundColor: style.color || '#000000'
+                };
+
+                formatted[index] = (
+                  <span style={reversedStyle}>{element.bit}</span>
+                );
+              }
+            });
+          }
+
+          // Handle format codes and push it away
+          parsed.push(<span style={style}>{formatBits[0]}{formatted}</span>);
         }
 
-        // Handle format clearing control character
-        var msgBits = bit.split('\x0F');
-
-        // Remove color codes
-        msgBits[0] = msgBits[0].replace(matches[0], '');
-
-        var style = {
-          color: colorCodes[parseInt(matches[1])],
-          backgroundColor: colorCodes[parseInt(matches[2])]
-        };
-
-        parsed.push(<span style={style}>{msgBits[0]}</span>);
-        if (msgBits[1]) {
-          parsed.push(<span>{msgBits[1]}</span>);
+        if (bits.length > 0) {
+          // Move onto the next bit
+          parsed = parsed.concat(parse(bits));
         }
+
+        return parsed;
+      };
+
+      var bits = [];
+
+      // Split on the color control character
+      message.split(controlChars.color).forEach(function (bit) {
+        bits.push({
+          string: bit,
+          colors: true
+        });
       });
 
-      return parsed;
+      // Parse color and format codes
+      return parse(bits);
     };
 
     return (
