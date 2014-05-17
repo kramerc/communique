@@ -36,6 +36,11 @@ var MessageForm = React.createClass({
       }, 0);
     }
   },
+  componentDidUpdate: function () {
+    if (this.props.buffer.active) {
+      this.refs.message.getDOMNode().focus();
+    }
+  },
   getInitialState: function () {
     return {};
   },
