@@ -2,14 +2,14 @@
 
 var React = require('react');
 
-var Messages = require('./messages');
-
 var Buffer = React.createClass({
   render: function () {
+    var Component = require('./' + (this.props.buffer.component || 'messages'));
+
     return (
       <div className="buffer"
            style={{display: this.props.buffer.active ? undefined : 'none'}}>
-        <Messages buffer={this.props.buffer} />
+        <Component buffer={this.props.buffer} />
       </div>
     );
   }
