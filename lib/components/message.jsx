@@ -156,10 +156,10 @@ var Message = React.createClass({
       var bits = [];
 
       // Split on the color control character
-      message.split(controlChars.color).forEach(function (bit) {
+      message.split(controlChars.color).forEach(function (bit, index) {
         bits.push({
           string: bit,
-          colors: true
+          colors: index > 0
         });
       });
 
