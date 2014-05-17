@@ -69,7 +69,9 @@ var Messages = React.createClass({
     return (
       <div className="messages">
         <MessageList data={this.state.data} />
-        <MessageForm onMessageSubmit={this.handleMessageSubmit} />
+        <MessageForm
+            buffer={this.props.buffer}
+            onMessageSubmit={this.handleMessageSubmit} />
       </div>
     );
   }

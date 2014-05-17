@@ -45,11 +45,27 @@ div.messages {
   }
 
   form {
+    display: table;
     height: 23px;
+    width: 100%;
 
-    input {
-      box-sizing: border-box;
-      width: 100%;
+    > label {
+      display: table-row;
+
+      > span, > input {
+        display: table-cell;
+      }
+
+      > span {
+        padding-right: 4px;
+        width: 1px;
+        word-wrap: nowrap;
+      }
+
+      > input {
+        box-sizing: border-box;
+        width: 100%;
+      }
     }
   }
 }
