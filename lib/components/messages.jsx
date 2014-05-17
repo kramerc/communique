@@ -15,9 +15,18 @@ var Messages = React.createClass({
     }
   },
   handleMessageSubmit: function (message) {
+    var client = utils.renderer.getIrcClient();
+    var nick;
+
+    if (this.props.buffer.parent !== 'default') {
+      nick = client.connections[this.props.buffer.parent].irc.me;
+    } else {
+      nick = null;
+    }
+
     var messageData = {
       timestamp: Date.now(),
-      from: 'Communique', // TODO: Use nick reference when implemented
+      from: nick,
       message: message,
       to: this.props.buffer.name
     };
