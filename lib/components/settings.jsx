@@ -3,6 +3,8 @@
 var ipc = require('ipc');
 var React = require('react');
 
+var utils = require('../utils');
+
 var Settings = React.createClass({
   handleChange: function (field) {
     return function (event) {
@@ -13,13 +15,13 @@ var Settings = React.createClass({
     }.bind(this);
   },
   handleSubmit: function () {
-    localStorage.setItem('communique:settings', JSON.stringify(this.state));
+    utils.renderer.setSettings(this.state);
     ipc.send('settings', this.state);
 
     return false;
   },
   getInitialState: function () {
-    return JSON.parse(localStorage.getItem('communique:settings')) || {};
+    return utils.renderer.getSettings() || {};
   },
   render: function () {
     return (
