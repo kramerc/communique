@@ -21,7 +21,7 @@ var Settings = React.createClass({
     return false;
   },
   getInitialState: function () {
-    return utils.renderer.getSettings() || {};
+    return utils.renderer.getSettings();
   },
   render: function () {
     return (
