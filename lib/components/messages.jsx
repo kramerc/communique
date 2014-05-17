@@ -15,18 +15,9 @@ var Messages = React.createClass({
     }
   },
   handleMessageSubmit: function (message) {
-    var client = utils.renderer.getIrcClient();
-    var nick;
-
-    if (this.props.buffer.parent !== 'default') {
-      nick = client.connections[this.props.buffer.parent].irc.me;
-    } else {
-      nick = null;
-    }
-
     var messageData = {
       timestamp: Date.now(),
-      from: nick,
+      from: this.state.nick,
       message: message,
       to: this.props.buffer.name
     };
@@ -54,16 +45,26 @@ var Messages = React.createClass({
       message: messageData.message
     });
   },
+  nickListener: function (connection, newNick) {
+    if (connection !== this.props.buffer.parent) {
+      return;
+    }
+
+    this.setState({nick: newNick});
+  },
   getInitialState: function () {
     return {
       data: []
     };
   },
   componentWillMount: function () {
+    ipc.send('connection:requestNick', this.props.buffer.parent);
     ipc.on('buffer:message', this.bufferMessageListener);
+    ipc.on('connection:nick', this.nickListener);
   },
   componentWillUnmount: function () {
     ipc.removeListener('buffer:message', this.bufferMessageListener);
+    ipc.removeListener('connection:nick', this.nickListener);
   },
   render: function () {
     return (
