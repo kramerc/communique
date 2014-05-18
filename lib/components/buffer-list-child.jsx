@@ -1,18 +1,28 @@
 /** @jsx React.DOM */
 
+var ipc = require('ipc');
 var React = require('react');
+
+var CloseButton = require('./close-button');
 
 var BufferListChild = React.createClass({
   handleClick: function () {
     this.props.onBufferClick(this.props.buffer);
   },
+  handleCloseClick: function () {
+    ipc.send('buffer:requestClose', this.props.buffer);
+  },
   render: function () {
     var buffer = this.props.buffer;
     return (
       <li className={buffer.active ? 'active' : null}
-          data-server={this.props.buffer.name === 'server'}
+          data-server={buffer.name === 'server'}
           onClick={this.handleClick}>
-        <span>{buffer.displayName}</span>
+        <div>
+          <span>{buffer.displayName}</span>
+          {buffer.closable ?
+            <CloseButton onClick={this.handleCloseClick} /> : null}
+        </div>
       </li>
     );
   }

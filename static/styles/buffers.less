@@ -10,12 +10,20 @@ div.buffer-frame {
     width: 200px;
 
     li {
-      span {
+      div {
         display: block;
         padding: 4px;
+
+        > button.close {
+          display: none;
+        }
+
+        &:hover > button.close {
+          display: block;
+        }
       }
 
-      &.active > span, > span:hover {
+      &.active > div, > div:hover {
         background-color: #CCCCCC;
       }
 
@@ -27,7 +35,7 @@ div.buffer-frame {
         li {
           display: block;
 
-          span {
+          div {
             padding: 4px 4px 4px 16px;
           }
 
@@ -41,11 +49,11 @@ div.buffer-frame {
       // 'default' is considered to be a pseudo-parent. Have its children look
       // like they're not apart of a group.
       &[data-default="true"] {
-        > span {
+        > div {
           display: none;
         }
 
-        ul li span {
+        ul li div {
           padding: 4px;
         }
       }
