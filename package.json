@@ -7,7 +7,7 @@
     "url": "https://github.com/kramerc/communique.git"
   },
   "license": "MIT",
-  "atomShellVersion": "0.12.4",
+  "atomShellVersion": "0.12.5",
   "dependencies": {
     "react": "^0.10.0",
     "slate-irc": "git://github.com/kramerc/slate-irc.git",
