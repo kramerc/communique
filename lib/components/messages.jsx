@@ -5,6 +5,7 @@ var React = require('react');
 
 var MessageList = require('./message-list');
 var MessageForm = require('./message-form');
+var NickList = require('./nick-list');
 var utils = require('../utils');
 
 var Messages = React.createClass({
@@ -69,7 +70,11 @@ var Messages = React.createClass({
   render: function () {
     return (
       <div className="messages">
-        <MessageList data={this.state.data} />
+        <div>
+          <MessageList data={this.state.data} />
+          {utils.isChannel(this.props.buffer.name) ?
+            <NickList buffer={this.props.buffer} /> : null}
+        </div>
         <MessageForm
             buffer={this.props.buffer}
             onMessageSubmit={this.handleMessageSubmit} />

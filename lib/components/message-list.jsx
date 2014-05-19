@@ -28,7 +28,7 @@ var MessageList = React.createClass({
     });
 
     return (
-      <ul>
+      <ul className="message-list">
         {messageNodes}
       </ul>
     );
