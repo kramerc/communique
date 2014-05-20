@@ -9,8 +9,9 @@
   "license": "MIT",
   "atomShellVersion": "0.12.5",
   "dependencies": {
+    "irc-message": "^1.0.0",
+    "irc-replies": "^2.0.0",
     "react": "^0.10.0",
-    "slate-irc": "git://github.com/kramerc/slate-irc.git",
     "strftime": "^0.8.0"
   },
   "devDependencies": {

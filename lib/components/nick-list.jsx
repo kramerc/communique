@@ -21,7 +21,7 @@ var NickList = React.createClass({
   },
   render: function () {
     var nickNodes = this.state.nicks.map(function (nick) {
-      return <li>{nick}</li>;
+      return <li>{nick.mode}{nick.name}</li>;
     });
 
     return (
