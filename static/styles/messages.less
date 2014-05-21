@@ -28,7 +28,7 @@ div.messages {
         }
       }
 
-      span.nick {
+      span.from {
         &:empty {
           display: none;
         }
@@ -39,6 +39,18 @@ div.messages {
 
         &:after {
           content: '> ';
+        }
+      }
+
+      &[data-notice="true"] {
+        span.from {
+          &:before {
+            content: '-';
+          }
+
+          &:after {
+            content: '- ';
+          }
         }
       }
 

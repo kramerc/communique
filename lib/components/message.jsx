@@ -168,15 +168,15 @@ var Message = React.createClass({
     };
 
     return (
-      <li className="message">
+      <li className="message" data-notice={this.props.message.notice}>
         <pre>
           <span className="timestamp">
-            {strftime('%H:%M:%S', new Date(this.props.timestamp))}
+            {strftime('%H:%M:%S', new Date(this.props.message.timestamp))}
           </span>
-          <span className="nick">
-            {this.props.nick}
+          <span className="from">
+            {this.props.message.from}
           </span>
-          {parseMessage(this.props.children.toString())}
+          {parseMessage(this.props.message.message)}
         </pre>
       </li>
     );
