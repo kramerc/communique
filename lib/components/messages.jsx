@@ -32,12 +32,12 @@ var Messages = React.createClass({
       var args = message.split(' ');
       var command = args.splice(0, 1)[0].substring(1).toLowerCase();
 
-      if (args.length === 0) {
-        switch (command) {
-        case 'part':
-          messageData.message += ' ' + this.props.buffer.name;
-          break;
-        }
+      if (args.length === 0 && command === 'part') {
+        messageData.message += ' ' + this.props.buffer.name;
+      }
+
+      if (args.length < 2 && command === 'invite') {
+        messageData.message += ' ' + this.props.buffer.name;
       }
     }
 
