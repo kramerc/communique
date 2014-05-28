@@ -7,7 +7,7 @@
     "url": "https://github.com/kramerc/communique.git"
   },
   "license": "MIT",
-  "atomShellVersion": "0.12.5",
+  "atomShellVersion": "0.12.7",
   "dependencies": {
     "irc-message": "^1.0.0",
     "irc-replies": "^2.0.0",
