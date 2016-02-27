@@ -7,7 +7,6 @@
     "url": "https://github.com/kramerc/communique.git"
   },
   "license": "MIT",
-  "atomShellVersion": "0.13.2",
   "dependencies": {
     "irc-message": "^1.0.0",
     "irc-replies": "^2.0.0",
@@ -16,15 +15,14 @@
   },
   "devDependencies": {
     "async": "^0.8.0",
-    "grunt-download-atom-shell": "^0.8.0",
+    "electron-packager": "^5.2.1",
+    "electron-prebuilt": "^0.36.9",
+    "grunt-download-electron": "^2.0.1",
     "gulp": "^3.6.2",
     "gulp-jshint": "^1.5.5",
     "gulp-less": "^1.2.3",
     "gulp-react": "^0.3.3",
     "jshint-stylish": "^0.2.0",
-    "minimist": "0.0.9",
-    "mkdirp": "^0.5.0",
-    "ncp": "^0.5.1",
     "rimraf": "^2.2.8",
     "standalone-grunt-runner": "0.0.1"
   }
