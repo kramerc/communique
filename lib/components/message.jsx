@@ -37,6 +37,8 @@ var bitCounter = 0;
 var Message = React.createClass({
   render: function () {
     var parseMessage = function (message) {
+      var formattedCounter = 0;
+
       var hasFormatControlChars = function (str) {
         return str.indexOf(controlChars.bold) > -1 ||
                str.indexOf(controlChars.italics) > -1 ||
@@ -45,9 +47,8 @@ var Message = React.createClass({
       };
 
       var format = function (str, bitKey) {
-        var formattedCounter = 0;
         var formatted = [];
-        var key = bitKey + '-' + formattedCounter++;
+        var key = bitKey + '-format' + formattedCounter++;
 
         // Match format codes
         var matches = str.match(controlChars.formatEx);
@@ -85,7 +86,7 @@ var Message = React.createClass({
 
         if (matches[3]) {
           // But wait, there's more!
-          formatted = formatted.concat(format(matches[3]));
+          formatted = formatted.concat(format(matches[3], bitKey));
         }
 
         return formatted;
