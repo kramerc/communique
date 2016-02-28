@@ -1,6 +1,8 @@
 import {ipcRenderer} from 'electron';
 import React from 'react';
 
+import Nick from './nick';
+
 export default class NickList extends React.Component {
   constructor(props) {
     super(props);
@@ -29,7 +31,7 @@ export default class NickList extends React.Component {
     let buffer = this.props.buffer;
     let nickNodes = this.state.nicks.map((nick) => {
       let key = buffer.parent + '-' + buffer.name + '-nick-' + nick.name;
-      return <li key={key}>{nick.mode}{nick.name}</li>;
+      return <Nick key={key} nick={nick} />;
     });
 
     return (
