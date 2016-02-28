@@ -1,7 +1,7 @@
-var strftime = require('strftime');
-var React = require('react');
+import strftime from 'strftime';
+import React from 'react';
 
-var colorCodes = [
+const colorCodes = [
   '#FFFFFF', //  0: white
   '#000000', //  1: black
   '#00007F', //  2: blue
@@ -20,7 +20,7 @@ var colorCodes = [
   '#D2D2D2'  // 15: light grey
 ];
 
-var controlChars = {
+const controlChars = {
   bold: '\x02',
   color: '\x03',
   reset: '\x0F',
@@ -31,26 +31,26 @@ var controlChars = {
   formatEx: /(\x02|\x0F|\x1D|\x16|\x1F)(.+?([\x02|\x0F|\x1D|\x16|\x1F].+)|.+)/
 };
 
-var bitCounter = 0;
+let bitCounter = 0;
 
-var Message = React.createClass({
-  render: function () {
-    var parseMessage = function (message) {
-      var formattedCounter = 0;
+export default class Message extends React.Component {
+  render() {
+    let parseMessage = (message) => {
+      let formattedCounter = 0;
 
-      var hasFormatControlChars = function (str) {
+      let hasFormatControlChars = (str) => {
         return str.indexOf(controlChars.bold) > -1 ||
                str.indexOf(controlChars.italics) > -1 ||
                str.indexOf(controlChars.reverse) > -1 ||
                str.indexOf(controlChars.underline) > -1;
       };
 
-      var format = function (str, bitKey, style) {
-        var formatted = [];
-        var key = bitKey + '-format' + formattedCounter++;
+      let format = (str, bitKey, style) => {
+        let formatted = [];
+        let key = bitKey + '-format' + formattedCounter++;
 
         // Match format codes
-        var matches = str.match(controlChars.formatEx);
+        let matches = str.match(controlChars.formatEx);
 
         if (!matches) {
           // No format codes to handle
@@ -58,7 +58,7 @@ var Message = React.createClass({
         }
 
         // Remove the next bit that was picked up in the match before it
-        var bit = matches[2].replace(matches[3], '');
+        let bit = matches[2].replace(matches[3], '');
 
         switch (matches[1]) {
         case controlChars.bold:
@@ -96,17 +96,17 @@ var Message = React.createClass({
         return formatted;
       };
 
-      var parse = function (bits) {
-        var parsed = [];
-        var bit = bits.shift();
-        var style = {
+      let parse = (bits) => {
+        let parsed = [];
+        let bit = bits.shift();
+        let style = {
           backgroundColor: '#FFFFFF',
           color: '#000000'
         };
-        var msgBits, formatBits, formatted;
+        let msgBits, formatBits, formatted;
 
         // Match color codes
-        var colorMatches = bit.string.match(/(\d+),?(\d+)?/);
+        let colorMatches = bit.string.match(/(\d+),?(\d+)?/);
 
         if (!colorMatches && !hasFormatControlChars(bit.string)) {
           // No color or format codes found
@@ -154,7 +154,7 @@ var Message = React.createClass({
         return parsed;
       };
 
-      var bits = [];
+      let bits = [];
 
       // Split on the color control character
       message.split(controlChars.color).forEach(function (bit, index) {
@@ -167,7 +167,7 @@ var Message = React.createClass({
 
       // Parse color and format codes
       return parse(bits);
-    }.bind(this);
+    };
 
     return (
       <li className="message" data-notice={this.props.message.notice}>
@@ -183,6 +183,13 @@ var Message = React.createClass({
       </li>
     );
   }
-});
+}
 
-module.exports = Message;
+Message.propTypes = {
+  message: React.PropTypes.shape({
+    notice: React.PropTypes.bool,
+    timestamp: React.PropTypes.number.isRequired,
+    from: React.PropTypes.string,
+    message: React.PropTypes.string.isRequired
+  }).isRequired
+};

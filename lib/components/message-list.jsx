@@ -1,25 +1,27 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-var Message = require('./message');
+import Message from './message';
 
-var counter = 0;
+let counter = 0;
 
-var MessageList = React.createClass({
-  componentWillUpdate: function () {
-    var node = ReactDOM.findDOMNode(this);
+export default class MessageList extends React.Component {
+  componentWillUpdate() {
+    let node = ReactDOM.findDOMNode(this);
     this.shouldScrollToBottom =
       node.scrollTop + node.offsetHeight === node.scrollHeight;
-  },
-  componentDidUpdate: function () {
-    var node = ReactDOM.findDOMNode(this);
+  }
+
+  componentDidUpdate() {
+    let node = ReactDOM.findDOMNode(this);
     if (this.shouldScrollToBottom) {
       node.scrollTop = node.scrollHeight;
     }
-  },
-  render: function () {
-    var messageNodes = this.props.data.map(function (message) {
-      var key = 'message' + counter++;
+  }
+
+  render() {
+    let messageNodes = this.props.data.map((message) => {
+      let key = 'message' + counter++;
       return <Message key={key} message={message} />;
     });
 
@@ -29,6 +31,8 @@ var MessageList = React.createClass({
       </ul>
     );
   }
-});
+}
 
-module.exports = MessageList;
+MessageList.propTypes = {
+  data: React.PropTypes.array.isRequired
+};

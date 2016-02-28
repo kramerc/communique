@@ -1,7 +1,7 @@
-var React = require('react');
+import React from 'react';
 
-var CloseButton = React.createClass({
-  render: function () {
+export default class CloseButton extends React.Component {
+  render() {
     return (
       <button className="close"
           onClick={this.props.onClick}
@@ -10,6 +10,9 @@ var CloseButton = React.createClass({
       </button>
     );
   }
-});
+}
 
-module.exports = CloseButton;
+CloseButton.propTypes = {
+  onClick: React.PropTypes.func.isRequired,
+  style: React.PropTypes.object
+};

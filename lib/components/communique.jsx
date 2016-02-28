@@ -1,15 +1,15 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-var BufferFrame = require('./buffer-frame');
+import BufferFrame from './buffer-frame';
 
-var Communique = React.createClass({
-  render: function () {
+class Communique extends React.Component {
+  render() {
     return (
       <BufferFrame />
     );
   }
-});
+}
 
 ReactDOM.render(
   <Communique />,

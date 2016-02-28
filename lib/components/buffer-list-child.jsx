@@ -1,29 +1,34 @@
-var ipcRenderer = require('electron').ipcRenderer;
-var React = require('react');
+import {ipcRenderer} from 'electron';
+import React from 'react';
 
-var CloseButton = require('./close-button');
+import CloseButton from './close-button';
 
-var BufferListChild = React.createClass({
-  handleClick: function () {
+export default class BufferListChild extends React.Component {
+  handleClick() {
     this.props.onBufferClick(this.props.buffer);
-  },
-  handleCloseClick: function () {
+  }
+
+  handleCloseClick() {
     ipcRenderer.send('buffer:requestClose', this.props.buffer);
-  },
-  render: function () {
-    var buffer = this.props.buffer;
+  }
+
+  render() {
+    let buffer = this.props.buffer;
     return (
       <li className={buffer.active ? 'active' : null}
           data-server={buffer.name === 'server'}
-          onClick={this.handleClick}>
+          onClick={this.handleClick.bind(this)}>
         <div>
           <span>{buffer.displayName}</span>
           {buffer.closable ?
-            <CloseButton onClick={this.handleCloseClick} /> : null}
+            <CloseButton onClick={this.handleCloseClick.bind(this)} /> : null}
         </div>
       </li>
     );
   }
-});
+}
 
-module.exports = BufferListChild;
+BufferListChild.propTypes = {
+  buffer: React.PropTypes.object.isRequired,
+  onBufferClick: React.PropTypes.func.isRequired
+};

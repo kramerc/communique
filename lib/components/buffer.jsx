@@ -1,8 +1,8 @@
-var React = require('react');
+import React from 'react';
 
-var Buffer = React.createClass({
-  render: function () {
-    var Component = require('./' + (this.props.buffer.component || 'messages'));
+export default class Buffer extends React.Component {
+  render() {
+    let Component = require('./' + (this.props.buffer.component || 'messages')).default;
 
     return (
       <div className="buffer"
@@ -11,6 +11,11 @@ var Buffer = React.createClass({
       </div>
     );
   }
-});
+}
 
-module.exports = Buffer;
+Buffer.propTypes = {
+  buffer: React.PropTypes.shape({
+    component: React.PropTypes.string.isRequired,
+    active: React.PropTypes.bool
+  }).isRequired
+};

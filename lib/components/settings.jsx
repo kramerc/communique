@@ -1,27 +1,31 @@
-var ipcRenderer = require('electron').ipcRenderer;
-var React = require('react');
+import {ipcRenderer} from 'electron';
+import React from 'react';
 
-var utils = require('../utils');
+import * as utils from '../utils';
 
-var Settings = React.createClass({
-  handleChange: function (field) {
-    return function (event) {
-      var setting = {};
+export default class Settings extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = utils.renderer.getSettings();
+  }
+
+  handleChange(field) {
+    return (event) => {
+      let setting = {};
       setting[field] = event.target.value;
 
       this.setState(setting);
-    }.bind(this);
-  },
-  handleSubmit: function () {
+    };
+  }
+
+  handleSubmit() {
     utils.renderer.setSettings(this.state);
     ipcRenderer.send('settings', this.state);
 
     return false;
-  },
-  getInitialState: function () {
-    return utils.renderer.getSettings();
-  },
-  render: function () {
+  }
+
+  render() {
     return (
       <div className="settings">
         <form onSubmit={this.handleSubmit}>
@@ -61,6 +65,4 @@ var Settings = React.createClass({
       </div>
     );
   }
-});
-
-module.exports = Settings;
+}

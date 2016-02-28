@@ -1,26 +1,34 @@
-var ipcRenderer = require('electron').ipcRenderer;
-var React = require('react');
+import {ipcRenderer} from 'electron';
+import React from 'react';
 
-var NickList = React.createClass({
-  bufferNamesListener: function (event, buffer, names) {
+export default class NickList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {nicks: []};
+
+    // Bind "this" to the event listeners
+    this.bufferNamesListener = this.bufferNamesListener.bind(this);
+  }
+
+  bufferNamesListener(event, buffer, names) {
     if (buffer.parent === this.props.buffer.parent &&
         buffer.name === this.props.buffer.name) {
       this.setState({nicks: names});
     }
-  },
-  componentWillMount: function () {
+  }
+
+  componentWillMount() {
     ipcRenderer.on('buffer:names', this.bufferNamesListener);
-  },
-  componentWillUnmount: function () {
+  }
+
+  componentWillUnmount() {
     ipcRenderer.removeListener('buffer:names', this.bufferNamesListener);
-  },
-  getInitialState: function () {
-    return {nicks: []};
-  },
-  render: function () {
-    var buffer = this.props.buffer;
-    var nickNodes = this.state.nicks.map(function (nick) {
-      var key = buffer.parent + '-' + buffer.name + '-nick-' + nick.name;
+  }
+
+  render() {
+    let buffer = this.props.buffer;
+    let nickNodes = this.state.nicks.map((nick) => {
+      let key = buffer.parent + '-' + buffer.name + '-nick-' + nick.name;
       return <li key={key}>{nick.mode}{nick.name}</li>;
     });
 
@@ -30,6 +38,11 @@ var NickList = React.createClass({
       </ul>
     );
   }
-});
+}
 
-module.exports = NickList;
+NickList.propTypes = {
+  buffer: React.PropTypes.shape({
+    name: React.PropTypes.string.isRequired,
+    parent: React.PropTypes.string.isRequired
+  }).isRequired
+};

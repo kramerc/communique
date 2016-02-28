@@ -1,34 +1,47 @@
-var ipcRenderer = require('electron').ipcRenderer;
-var React = require('react');
+import {ipcRenderer} from 'electron';
+import React from 'react';
 
-var MessageList = require('./message-list');
-var MessageForm = require('./message-form');
-var NickList = require('./nick-list');
-var utils = require('../utils');
+import MessageList from './message-list';
+import MessageForm from './message-form';
+import NickList from './nick-list';
+import * as utils from '../utils';
 
-var Messages = React.createClass({
-  bufferMessageListener: function (event, buffer, message) {
+export default class Messages extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: []
+    };
+
+    // Bind "this" to the event listeners
+    this.bufferMessageListener = this.bufferMessageListener.bind(this);
+    this.nickListener = this.nickListener.bind(this);
+    this.handleMessageSubmit = this.handleMessageSubmit.bind(this);
+  }
+
+  bufferMessageListener(event, buffer, message) {
     if (buffer.parent === this.props.buffer.parent &&
         buffer.name === this.props.buffer.name) {
       this.setState({data: this.state.data.concat([message])});
     }
-  },
-  handleMessageSubmit: function (message) {
-    var messageData = {
+  }
+
+  handleMessageSubmit(message) {
+    let messageData = {
       timestamp: Date.now(),
       from: this.state.nick,
       message: message,
       to: this.props.buffer.name
     };
-    var newMessages = this.state.data.concat([messageData]);
+    let newMessages = this.state.data.concat([messageData]);
 
     if (!utils.isCommand(message)) {
       // Don't echo commands verbatim to the buffer
       this.setState({data: newMessages});
     } else {
       // Fill in the channel argument for certain commands if omitted
-      var args = message.split(' ');
-      var command = args.splice(0, 1)[0].substring(1).toLowerCase();
+      let args = message.split(' ');
+      let command = args.splice(0, 1)[0].substring(1).toLowerCase();
 
       if (args.length === 0 && command === 'part') {
         messageData.message += ' ' + this.props.buffer.name;
@@ -43,29 +56,28 @@ var Messages = React.createClass({
       buffer: this.props.buffer,
       message: messageData.message
     });
-  },
-  nickListener: function (event, connection, newNick) {
+  }
+
+  nickListener(event, connection, newNick) {
     if (connection !== this.props.buffer.parent) {
       return;
     }
 
     this.setState({nick: newNick});
-  },
-  getInitialState: function () {
-    return {
-      data: []
-    };
-  },
-  componentWillMount: function () {
+  }
+
+  componentWillMount() {
     ipcRenderer.send('connection:requestNick', this.props.buffer.parent);
     ipcRenderer.on('buffer:message', this.bufferMessageListener);
     ipcRenderer.on('connection:nick', this.nickListener);
-  },
-  componentWillUnmount: function () {
+  }
+
+  componentWillUnmount() {
     ipcRenderer.removeListener('buffer:message', this.bufferMessageListener);
     ipcRenderer.removeListener('connection:nick', this.nickListener);
-  },
-  render: function () {
+  }
+
+  render() {
     return (
       <div className="messages">
         <div>
@@ -79,6 +91,11 @@ var Messages = React.createClass({
       </div>
     );
   }
-});
+}
 
-module.exports = Messages;
+Messages.propTypes = {
+  buffer: React.PropTypes.shape({
+    name: React.PropTypes.string.isRequired,
+    parent: React.PropTypes.string.isRequired
+  }).isRequired
+};

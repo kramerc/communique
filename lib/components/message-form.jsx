@@ -1,48 +1,60 @@
-var ipcRenderer = require('electron').ipcRenderer;
-var React = require('react');
+import {ipcRenderer} from 'electron';
+import React from 'react';
 
-var MessageForm = React.createClass({
-  handleSubmit: function (event) {
+export default class MessageForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+
+    // Bind "this" to the event listeners
+    this.nickListener = this.nickListener.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(event) {
     event.preventDefault();
 
-    var message = this.refs.message.value;
+    let message = this.refs.message.value;
     this.props.onMessageSubmit(message);
 
     // Clear the form
     this.refs.message.value = '';
-  },
-  nickListener: function (event, connection, newNick) {
+  }
+
+  nickListener(event, connection, newNick) {
     if (connection !== this.props.buffer.parent) {
       return;
     }
 
     this.setState({nick: newNick});
-  },
-  componentWillMount: function () {
+  }
+
+  componentWillMount() {
     ipcRenderer.send('connection:requestNick', this.props.buffer.parent);
     ipcRenderer.on('connection:nick', this.nickListener);
-  },
-  componentWillUnmount: function () {
+  }
+
+  componentWillUnmount() {
     ipcRenderer.removeListener('connection:nick', this.nickListener);
-  },
-  componentDidMount: function () {
+  }
+
+  componentDidMount() {
     // Auto focus fix
-    var node = this.refs.message;
+    let node = this.refs.message;
     if (node.ownerDocument.activeElement !== node) {
-      setTimeout(function () {
+      setTimeout(() => {
         node.focus();
       }, 0);
     }
-  },
-  componentDidUpdate: function () {
+  }
+
+  componentDidUpdate() {
     if (this.props.buffer.active) {
       this.refs.message.focus();
     }
-  },
-  getInitialState: function () {
-    return {};
-  },
-  render: function () {
+  }
+
+  render() {
     return (
       <form className="message-form" onSubmit={this.handleSubmit}>
         <label>
@@ -55,6 +67,12 @@ var MessageForm = React.createClass({
       </form>
     );
   }
-});
+}
 
-module.exports = MessageForm;
+MessageForm.propTypes = {
+  buffer: React.PropTypes.shape({
+    active: React.PropTypes.bool,
+    parent: React.PropTypes.string.isRequired
+  }).isRequired,
+  onMessageSubmit: React.PropTypes.func.isRequired
+};

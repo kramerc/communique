@@ -1,54 +1,61 @@
-var React = require('react');
+import React from 'react';
 
-var BufferListParent = require('./buffer-list-parent');
+import BufferListParent from './buffer-list-parent';
 
-var BufferList = React.createClass({
-  getParents: function () {
-    var parents = [];
-    this.props.buffers.forEach(function (buffer) {
+export default class BufferList extends React.Component {
+  getParents() {
+    let parents = [];
+    this.props.buffers.forEach((buffer) => {
       if (parents.indexOf(buffer.parent) === -1) {
         parents.push(buffer.parent);
       }
     });
     return parents;
-  },
-  getBuffersBelongingTo: function (parent) {
-    var children = [];
-    this.props.buffers.forEach(function (buffer) {
+  }
+
+  getBuffersBelongingTo(parent) {
+    let children = [];
+    this.props.buffers.forEach((buffer) => {
       if (buffer.parent === parent) {
         children.push(buffer);
       }
     });
     return children;
-  },
-  isParentActive: function (children) {
-    for (var i = 0; i < children.length; i++) {
+  }
+
+  isParentActive(children) {
+    for (let i = 0; i < children.length; i++) {
       if (children[i].name === 'server' && children[i].active) {
         return true;
       }
     }
     return false;
-  },
-  handleBufferClick: function (buffer) {
+  }
+
+  handleBufferClick(buffer) {
     this.props.onBufferClick(buffer);
-  },
-  render: function () {
-    var parentNodes = this.getParents().map(function (parent) {
-      var children = this.getBuffersBelongingTo(parent);
+  }
+
+  render() {
+    let parentNodes = this.getParents().map((parent) => {
+      let children = this.getBuffersBelongingTo(parent);
       return (
         <BufferListParent
             key={parent}
             parent={parent}
             buffers={children}
             active={this.isParentActive(children)}
-            onBufferClick={this.handleBufferClick} />
+            onBufferClick={this.handleBufferClick.bind(this)} />
       );
-    }.bind(this));
+    });
 
     return (
       <ul className="buffer-list">{parentNodes}</ul>
     );
   }
-});
+}
 
-module.exports = BufferList;
+BufferList.propTypes = {
+  buffers: React.PropTypes.array.isRequired,
+  onBufferClick: React.PropTypes.func.isRequired
+};
