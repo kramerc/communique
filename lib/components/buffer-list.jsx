@@ -39,6 +39,7 @@ var BufferList = React.createClass({
       var children = this.getBuffersBelongingTo(parent);
       return (
         <BufferListParent
+            key={parent}
             parent={parent}
             buffers={children}
             active={this.isParentActive(children)}

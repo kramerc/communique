@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var ipc = require('ipc');
+var ipcRenderer = require('electron').ipcRenderer;
 var React = require('react');
 
 var utils = require('../utils');
@@ -16,7 +16,7 @@ var Settings = React.createClass({
   },
   handleSubmit: function () {
     utils.renderer.setSettings(this.state);
-    ipc.send('settings', this.state);
+    ipcRenderer.send('settings', this.state);
 
     return false;
   },

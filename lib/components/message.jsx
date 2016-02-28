@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 
+var createFragment = require('react-addons-create-fragment');
 var strftime = require('strftime');
 var React = require('react');
 
@@ -33,6 +34,8 @@ var controlChars = {
   formatEx: /(\x02|\x0F|\x1D|\x12|\x15)(.+?([\x02|\x0F|\x1D|\x12|\x15].+)|.+)/
 };
 
+var bitCounter = 0;
+
 var Message = React.createClass({
   render: function () {
     var parseMessage = function (message) {
@@ -43,8 +46,10 @@ var Message = React.createClass({
                str.indexOf(controlChars.underline) > -1;
       };
 
-      var format = function (str) {
+      var format = function (str, bitKey) {
+        var formattedCounter = 0;
         var formatted = [];
+        var key = bitKey + '-' + formattedCounter++;
 
         // Match format codes
         var matches = str.match(controlChars.formatEx);
@@ -59,10 +64,14 @@ var Message = React.createClass({
 
         switch (matches[1]) {
         case controlChars.bold:
-          formatted.push(<span style={{fontWeight: 'bold'}}>{bit}</span>);
+          formatted.push(
+            <span key={key} style={{fontWeight: 'bold'}}>{bit}</span>
+          );
           break;
         case controlChars.italics:
-          formatted.push(<span style={{fontStyle: 'italic'}}>{bit}</span>);
+          formatted.push(
+            <span key={key} style={{fontStyle: 'italic'}}>{bit}</span>
+          );
           break;
         case controlChars.reverse:
           // As this requires knowledge of the colors, the component for this is
@@ -71,7 +80,7 @@ var Message = React.createClass({
           break;
         case controlChars.underline:
           formatted.push(
-            <span style={{textDecoration: 'underline'}}>{bit}</span>
+            <span key={key} style={{textDecoration: 'underline'}}>{bit}</span>
           );
           break;
         }
@@ -97,7 +106,7 @@ var Message = React.createClass({
           // No color or format codes found
           if (bit !== '') {
             // Pass along the message bit
-            parsed.push(<span>{bit}</span>);
+            parsed.push(<span key={bit.key}>{bit.string}</span>);
           }
         } else {
           // Handle format clearing control character by splitting
@@ -120,7 +129,7 @@ var Message = React.createClass({
 
           // Handle format codes
           formatBits = msgBits[0].split(controlChars.regEx);
-          formatted = format(msgBits[0]);
+          formatted = format(msgBits[0], bit.key);
 
           if (formatted.length > 0) {
             // Finish handling reversed
@@ -134,15 +143,19 @@ var Message = React.createClass({
                   backgroundColor: style.color || '#000000'
                 };
 
+                var bitFragment = createFragment(element.bit);
+                // TODO: Move this into format function
                 formatted[index] = (
-                  <span style={reversedStyle}>{element.bit}</span>
+                  <span style={reversedStyle}>{bitFragment}</span>
                 );
               }
             });
           }
 
           // Handle format codes and push it away
-          parsed.push(<span style={style}>{formatBits[0]}{formatted}</span>);
+          parsed.push(
+            <span key={bit.key} style={style}>{formatBits[0]}{formatted}</span>
+          );
         }
 
         if (bits.length > 0) {
@@ -158,6 +171,7 @@ var Message = React.createClass({
       // Split on the color control character
       message.split(controlChars.color).forEach(function (bit, index) {
         bits.push({
+          key: 'bit' + bitCounter++,
           string: bit,
           colors: index > 0
         });
@@ -165,7 +179,7 @@ var Message = React.createClass({
 
       // Parse color and format codes
       return parse(bits);
-    };
+    }.bind(this);
 
     return (
       <li className="message" data-notice={this.props.message.notice}>

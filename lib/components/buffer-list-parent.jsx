@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var ipc = require('ipc');
+var ipcRenderer = require('electron').ipcRenderer;
 var React = require('react');
 
 var BufferListChild = require('./buffer-list-child');
@@ -19,7 +19,7 @@ var BufferListParent = React.createClass({
   },
   handleCloseClick: function () {
     // Close the server buffer
-    ipc.send('buffer:requestClose', {
+    ipcRenderer.send('buffer:requestClose', {
       parent: this.props.parent,
       name: 'server'
     });

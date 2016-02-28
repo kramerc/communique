@@ -1,27 +1,29 @@
 /** @jsx React.DOM */
 
-var ipc = require('ipc');
+var ipcRenderer = require('electron').ipcRenderer;
 var React = require('react');
 
 var NickList = React.createClass({
-  bufferNamesListener: function (buffer, names) {
+  bufferNamesListener: function (event, buffer, names) {
     if (buffer.parent === this.props.buffer.parent &&
         buffer.name === this.props.buffer.name) {
       this.setState({nicks: names});
     }
   },
   componentWillMount: function () {
-    ipc.on('buffer:names', this.bufferNamesListener);
+    ipcRenderer.on('buffer:names', this.bufferNamesListener);
   },
   componentWillUnmount: function () {
-    ipc.removeListener('buffer:names', this.bufferNamesListener);
+    ipcRenderer.removeListener('buffer:names', this.bufferNamesListener);
   },
   getInitialState: function () {
     return {nicks: []};
   },
   render: function () {
+    var buffer = this.props.buffer;
     var nickNodes = this.state.nicks.map(function (nick) {
-      return <li>{nick.mode}{nick.name}</li>;
+      var key = buffer.parent + '-' + buffer.name + '-nick-' + nick.name;
+      return <li key={key}>{nick.mode}{nick.name}</li>;
     });
 
     return (

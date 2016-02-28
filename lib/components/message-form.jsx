@@ -1,19 +1,19 @@
 /** @jsx React.DOM */
 
-var ipc = require('ipc');
+var ipcRenderer = require('electron').ipcRenderer;
 var React = require('react');
 
 var MessageForm = React.createClass({
-  handleSubmit: function () {
-    var message = this.refs.message.getDOMNode().value;
+  handleSubmit: function (event) {
+    event.preventDefault();
+
+    var message = this.refs.message.value;
     this.props.onMessageSubmit(message);
 
     // Clear the form
-    this.refs.message.getDOMNode().value = '';
-
-    return false;
+    this.refs.message.value = '';
   },
-  nickListener: function (connection, newNick) {
+  nickListener: function (event, connection, newNick) {
     if (connection !== this.props.buffer.parent) {
       return;
     }
@@ -21,15 +21,15 @@ var MessageForm = React.createClass({
     this.setState({nick: newNick});
   },
   componentWillMount: function () {
-    ipc.send('connection:requestNick', this.props.buffer.parent);
-    ipc.on('connection:nick', this.nickListener);
+    ipcRenderer.send('connection:requestNick', this.props.buffer.parent);
+    ipcRenderer.on('connection:nick', this.nickListener);
   },
   componentWillUnmount: function () {
-    ipc.removeListener('connection:nick', this.nickListener);
+    ipcRenderer.removeListener('connection:nick', this.nickListener);
   },
   componentDidMount: function () {
     // Auto focus fix
-    var node = this.refs.message.getDOMNode();
+    var node = this.refs.message;
     if (node.ownerDocument.activeElement !== node) {
       setTimeout(function () {
         node.focus();
@@ -38,7 +38,7 @@ var MessageForm = React.createClass({
   },
   componentDidUpdate: function () {
     if (this.props.buffer.active) {
-      this.refs.message.getDOMNode().focus();
+      this.refs.message.focus();
     }
   },
   getInitialState: function () {

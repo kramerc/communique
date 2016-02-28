@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var ipc = require('ipc');
+var ipcRenderer = require('electron').ipcRenderer;
 var React = require('react');
 
 var CloseButton = require('./close-button');
@@ -10,7 +10,7 @@ var BufferListChild = React.createClass({
     this.props.onBufferClick(this.props.buffer);
   },
   handleCloseClick: function () {
-    ipc.send('buffer:requestClose', this.props.buffer);
+    ipcRenderer.send('buffer:requestClose', this.props.buffer);
   },
   render: function () {
     var buffer = this.props.buffer;

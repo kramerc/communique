@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var ipc = require('ipc');
+var ipcRenderer = require('electron').ipcRenderer;
 var React = require('react');
 
 var Buffer = require('./buffer');
@@ -47,11 +47,11 @@ var BufferFrame = React.createClass({
       active: bufferIndex
     });
   },
-  bufferCreateListener: function (buffer) {
+  bufferCreateListener: function (event, buffer) {
     var newBuffers = this.state.buffers.concat([buffer]);
     this.setState({buffers: newBuffers});
   },
-  bufferDeleteListener: function (buffer) {
+  bufferDeleteListener: function (event, buffer) {
     var newBuffers = this.state.buffers;
     var bufferIndex = this.indexOfBuffer(buffer.parent, buffer.name);
 
@@ -69,7 +69,7 @@ var BufferFrame = React.createClass({
     newBuffers.splice(bufferIndex, 1);
     this.setState({buffers: newBuffers});
   },
-  bufferSwitchListener: function (buffer) {
+  bufferSwitchListener: function (event, buffer) {
     this.setActive(buffer);
   },
   handleBufferClick: function (buffer) {
@@ -82,14 +82,14 @@ var BufferFrame = React.createClass({
     };
   },
   componentWillMount: function () {
-    ipc.on('buffer:create', this.bufferCreateListener);
-    ipc.on('buffer:delete', this.bufferDeleteListener);
-    ipc.on('buffer:switch', this.bufferSwitchListener);
+    ipcRenderer.on('buffer:create', this.bufferCreateListener);
+    ipcRenderer.on('buffer:delete', this.bufferDeleteListener);
+    ipcRenderer.on('buffer:switch', this.bufferSwitchListener);
   },
   componentWillUnmount: function () {
-    ipc.removeListener('buffer:create', this.bufferCreateListener);
-    ipc.removeListener('buffer:delete', this.bufferDeleteListener);
-    ipc.removeListener('buffer:switch', this.bufferSwitchListener);
+    ipcRenderer.removeListener('buffer:create', this.bufferCreateListener);
+    ipcRenderer.removeListener('buffer:delete', this.bufferDeleteListener);
+    ipcRenderer.removeListener('buffer:switch', this.bufferSwitchListener);
   },
   render: function () {
     var bufferNodes = this.state.buffers.map(function (buffer) {

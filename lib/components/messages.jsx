@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var ipc = require('ipc');
+var ipcRenderer = require('electron').ipcRenderer;
 var React = require('react');
 
 var MessageList = require('./message-list');
@@ -9,7 +9,7 @@ var NickList = require('./nick-list');
 var utils = require('../utils');
 
 var Messages = React.createClass({
-  bufferMessageListener: function (buffer, message) {
+  bufferMessageListener: function (event, buffer, message) {
     if (buffer.parent === this.props.buffer.parent &&
         buffer.name === this.props.buffer.name) {
       this.setState({data: this.state.data.concat([message])});
@@ -41,12 +41,12 @@ var Messages = React.createClass({
       }
     }
 
-    ipc.send('buffer:input', {
+    ipcRenderer.send('buffer:input', {
       buffer: this.props.buffer,
       message: messageData.message
     });
   },
-  nickListener: function (connection, newNick) {
+  nickListener: function (event, connection, newNick) {
     if (connection !== this.props.buffer.parent) {
       return;
     }
@@ -59,13 +59,13 @@ var Messages = React.createClass({
     };
   },
   componentWillMount: function () {
-    ipc.send('connection:requestNick', this.props.buffer.parent);
-    ipc.on('buffer:message', this.bufferMessageListener);
-    ipc.on('connection:nick', this.nickListener);
+    ipcRenderer.send('connection:requestNick', this.props.buffer.parent);
+    ipcRenderer.on('buffer:message', this.bufferMessageListener);
+    ipcRenderer.on('connection:nick', this.nickListener);
   },
   componentWillUnmount: function () {
-    ipc.removeListener('buffer:message', this.bufferMessageListener);
-    ipc.removeListener('connection:nick', this.nickListener);
+    ipcRenderer.removeListener('buffer:message', this.bufferMessageListener);
+    ipcRenderer.removeListener('connection:nick', this.nickListener);
   },
   render: function () {
     return (
