@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var createFragment = require('react-addons-create-fragment');
 var strftime = require('strftime');
 var React = require('react');

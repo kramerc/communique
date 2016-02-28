@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var ipcRenderer = require('electron').ipcRenderer;
 var React = require('react');
 
