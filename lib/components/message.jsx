@@ -1,24 +1,23 @@
-var createFragment = require('react-addons-create-fragment');
 var strftime = require('strftime');
 var React = require('react');
 
 var colorCodes = [
   '#FFFFFF', //  0: white
   '#000000', //  1: black
-  '#000088', //  2: navy
-  '#008800', //  3: green
+  '#00007F', //  2: blue
+  '#009300', //  3: green
   '#FF0000', //  4: red
-  '#880000', //  5: maroon
-  '#880088', //  6: purple
-  '#FF8800', //  7: orange
+  '#7F0000', //  5: brown
+  '#9C009C', //  6: purple
+  '#FC7F00', //  7: orange
   '#FFFF00', //  8: yellow
-  '#00FF00', //  9: lime
-  '#008888', // 10: teal
-  '#00FFFF', // 11: aqua
-  '#0000FF', // 12: royal
-  '#FF00FF', // 13: fuchsia
-  '#888888', // 14: grey
-  '#CCCCCC'  // 15: silver
+  '#00FC00', //  9: light green
+  '#009393', // 10: cyan
+  '#00FFFF', // 11: light cyan
+  '#0000FC', // 12: light blue
+  '#FF00FF', // 13: pink
+  '#7F7F7F', // 14: grey
+  '#D2D2D2'  // 15: light grey
 ];
 
 var controlChars = {
@@ -26,10 +25,10 @@ var controlChars = {
   color: '\x03',
   reset: '\x0F',
   italics: '\x1D',
-  reverse: '\x12',
-  underline: '\x15',
-  regEx: /\x02|\x03|\x0F|\x1D|\x12|\x15/,
-  formatEx: /(\x02|\x0F|\x1D|\x12|\x15)(.+?([\x02|\x0F|\x1D|\x12|\x15].+)|.+)/
+  reverse: '\x16',
+  underline: '\x1F',
+  regEx: /\x02|\x03|\x0F|\x1D|\x16|\x1F/,
+  formatEx: /(\x02|\x0F|\x1D|\x16|\x1F)(.+?([\x02|\x0F|\x1D|\x16|\x1F].+)|.+)/
 };
 
 var bitCounter = 0;
@@ -46,7 +45,7 @@ var Message = React.createClass({
                str.indexOf(controlChars.underline) > -1;
       };
 
-      var format = function (str, bitKey) {
+      var format = function (str, bitKey, style) {
         var formatted = [];
         var key = bitKey + '-format' + formattedCounter++;
 
@@ -73,9 +72,14 @@ var Message = React.createClass({
           );
           break;
         case controlChars.reverse:
-          // As this requires knowledge of the colors, the component for this is
-          // set later
-          formatted.push({bit: bit, reverse: true});
+          // Swap the background and foreground colors
+          style = {
+            color: style.backgroundColor,
+            backgroundColor: style.color
+          };
+          formatted.push(
+            <span key={key} style={style}>{bit}</span>
+          );
           break;
         case controlChars.underline:
           formatted.push(
@@ -86,7 +90,7 @@ var Message = React.createClass({
 
         if (matches[3]) {
           // But wait, there's more!
-          formatted = formatted.concat(format(matches[3], bitKey));
+          formatted = formatted.concat(format(matches[3], bitKey, style));
         }
 
         return formatted;
@@ -95,7 +99,10 @@ var Message = React.createClass({
       var parse = function (bits) {
         var parsed = [];
         var bit = bits.shift();
-        var style = {};
+        var style = {
+          backgroundColor: '#FFFFFF',
+          color: '#000000'
+        };
         var msgBits, formatBits, formatted;
 
         // Match color codes
@@ -112,7 +119,10 @@ var Message = React.createClass({
           msgBits = bit.string.split(controlChars.reset);
           if (msgBits[1]) {
             // Pass the right side off to the next recursion
-            bits.unshift({string: msgBits[1]});
+            bits.unshift({
+              string: msgBits[1],
+              key: 'bit' + bitCounter++
+            });
           }
 
           // Handle color codes
@@ -128,28 +138,7 @@ var Message = React.createClass({
 
           // Handle format codes
           formatBits = msgBits[0].split(controlChars.regEx);
-          formatted = format(msgBits[0], bit.key);
-
-          if (formatted.length > 0) {
-            // Finish handling reversed
-            formatted.forEach(function (element, index) {
-              var reversedStyle;
-
-              if (element.constructor.name === 'Object' && element.reverse) {
-                // Swap the background and foreground colors
-                reversedStyle = {
-                  color: style.backgroundColor || '#FFFFFF',
-                  backgroundColor: style.color || '#000000'
-                };
-
-                var bitFragment = createFragment(element.bit);
-                // TODO: Move this into format function
-                formatted[index] = (
-                  <span style={reversedStyle}>{bitFragment}</span>
-                );
-              }
-            });
-          }
+          formatted = format(msgBits[0], bit.key, style);
 
           // Handle format codes and push it away
           parsed.push(
