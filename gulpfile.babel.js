@@ -35,7 +35,7 @@ const paths = {
     glob: 'static/**/*',
     styles: {
       excludeGlob: '!static/styles/**/*',
-      main: 'static/styles/main.less'
+      main: 'static/styles/main.scss'
     }
   }
 };
@@ -45,7 +45,7 @@ gulp.task('default', ['run']);
 gulp.task('build', [
   'babel',
   'lint',
-  'less'
+  'sass'
 ], () => {
   return gulp.src([
     paths.static.glob,
@@ -84,9 +84,9 @@ gulp.task('lint', () => {
     .pipe($.eslint.failAfterError());
 });
 
-gulp.task('less', () => {
+gulp.task('sass', () => {
   return gulp.src(paths.static.styles.main)
-    .pipe($.less())
+    .pipe($.sass().on('error', $.sass.logError))
     .pipe(gulp.dest(paths.build.static.styles.dir));
 });
 
