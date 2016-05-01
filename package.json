@@ -30,6 +30,7 @@
     "gulp-load-plugins": "^1.2.0",
     "gulp-sass": "^2.2.0",
     "gulp-sourcemaps": "^1.6.0",
-    "rimraf": "^2.2.8"
+    "rimraf": "^2.2.8",
+    "vinyl-fs": "^2.4.3"
   }
 }

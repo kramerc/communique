@@ -8,6 +8,7 @@ import gulpLoadPlugins from 'gulp-load-plugins';
 import packager from 'electron-packager';
 import rimraf from 'rimraf';
 import {spawn} from 'child_process';
+import vfs from 'vinyl-fs';
 
 const $ = gulpLoadPlugins();
 const paths = {
@@ -27,6 +28,9 @@ const paths = {
   },
   lib: {
     glob: 'lib/**/*.{js,jsx}'
+  },
+  nodeModules: {
+    dir: 'node_modules'
   },
   package: {
     file: 'package.json'
@@ -90,12 +94,20 @@ gulp.task('sass', () => {
     .pipe(gulp.dest(paths.build.static.styles.dir));
 });
 
-gulp.task('package', ['build'], (callback) => {
+gulp.task('link-node-modules', () => {
+  return vfs.src(paths.nodeModules.dir)
+    .pipe(vfs.symlink(paths.build.dir));
+});
+
+gulp.task('package', ['build', 'link-node-modules'], (callback) => {
   packager({
     arch: 'all',
     platform: 'all',
     dir: paths.build.dir,
-    out: paths.dist.dir
+    out: paths.dist.dir,
+    asar: true,
+    prune: true,
+    overwrite: true
   }, (err) => {
     callback(err);
   });
