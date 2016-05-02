@@ -4,6 +4,7 @@ import React from 'react';
 import MessageList from './message-list';
 import MessageForm from './message-form';
 import NickList from './nick-list';
+import Topic from './topic';
 import * as utils from '../utils';
 
 export default class Messages extends React.Component {
@@ -50,6 +51,13 @@ export default class Messages extends React.Component {
       if (args.length < 2 && command === 'invite') {
         messageData.message += ' ' + this.props.buffer.name;
       }
+
+      if (command === 'topic' &&
+          (args.length === 0 || !utils.isChannel(args[0]))) {
+        messageData.message =
+          '/' + command + ' ' + this.props.buffer.name +
+          (args.length > 0 ? ' ' + args.join(' ') : '');
+      }
     }
 
     ipcRenderer.send('buffer:input', {
@@ -79,8 +87,10 @@ export default class Messages extends React.Component {
 
   render() {
     return (
-      <div className="messages">
-        <div>
+      <div className="messages-container">
+        {utils.isChannel(this.props.buffer.name) ?
+          <Topic buffer={this.props.buffer} /> : null}
+        <div className="messages">
           <MessageList data={this.state.data} />
           {utils.isChannel(this.props.buffer.name) ?
             <NickList buffer={this.props.buffer} /> : null}

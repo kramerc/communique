@@ -173,7 +173,8 @@ export default class Message extends React.Component {
       <li className="message" data-notice={this.props.message.notice}>
         <pre>
           <span className="timestamp">
-            {strftime('%H:%M:%S', new Date(this.props.message.timestamp))}
+            {this.props.message.timestamp ?
+              strftime('%H:%M:%S', new Date(this.props.message.timestamp)) : null}
           </span>
           <span className="from">
             {this.props.message.from}
@@ -188,7 +189,7 @@ export default class Message extends React.Component {
 Message.propTypes = {
   message: React.PropTypes.shape({
     notice: React.PropTypes.bool,
-    timestamp: React.PropTypes.number.isRequired,
+    timestamp: React.PropTypes.number,
     from: React.PropTypes.string,
     message: React.PropTypes.string.isRequired
   }).isRequired

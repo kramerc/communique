@@ -8,6 +8,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "dateformat": "^1.0.12",
     "irc-message": "^3.0.2",
     "irc-prefix-parser": "^1.0.1",
     "irc-replies": "^2.0.0",

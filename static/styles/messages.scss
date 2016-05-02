@@ -1,10 +1,10 @@
-div.messages {
+div.messages-container {
   display: flex;
   flex: 1;
   flex-flow: column;
   height: 100%;
 
-  > div {
+  > div.messages {
     display: flex;
     flex: 1;
     height: 100%;
@@ -16,50 +16,54 @@ div.messages {
     overflow: auto;
     padding: 0;
     width: 100%;
+  }
 
-    li.message {
-      span.timestamp {
-        &:before {
-          content: '[';
-        }
-
-        &:after {
-          content: '] ';
-        }
+  li.message {
+    span.timestamp {
+      &:empty {
+        display: none;
       }
 
+      &:before {
+        content: '[';
+      }
+
+      &:after {
+        content: '] ';
+      }
+    }
+
+    span.from {
+      &:empty {
+        display: none;
+      }
+
+      &:before {
+        content: '<';
+      }
+
+      &:after {
+        content: '> ';
+      }
+    }
+
+    &[data-notice="true"] {
       span.from {
-        &:empty {
-          display: none;
-        }
-
         &:before {
-          content: '<';
+          content: '-';
         }
 
         &:after {
-          content: '> ';
+          content: '- ';
         }
       }
+    }
 
-      &[data-notice="true"] {
-        span.from {
-          &:before {
-            content: '-';
-          }
-
-          &:after {
-            content: '- ';
-          }
-        }
-      }
-
-      pre {
-        margin: 0;
-        padding: 0;
-        word-wrap: break-word;
-        white-space: pre-wrap;
-      }
+    pre {
+      margin: 0;
+      padding: 0;
+      word-wrap: break-word;
+      white-space: pre-wrap;
     }
   }
 
