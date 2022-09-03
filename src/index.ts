@@ -19,6 +19,12 @@ const createWindow = (): void => {
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
+    titleBarStyle: "hidden",
+    titleBarOverlay: {
+      color: "#384151",
+      symbolColor: "#ffffff",
+      height: 30,
+    },
   });
 
   // and load the index.html of the app.

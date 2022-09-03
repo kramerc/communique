@@ -14,7 +14,8 @@
     "strict": true,
     "paths": {
       "*": ["node_modules/*"]
-    }
+    },
+    "lib": ["es2021", "dom"]
   },
   "include": ["src/**/*"]
 }

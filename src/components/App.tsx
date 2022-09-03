@@ -1,7 +1,12 @@
 import React from "react";
+import TitleBar from "./TitleBar";
 
 const App: React.FC = () => {
-  return <div>Communique</div>;
+  return (
+    <div>
+      <TitleBar />
+    </div>
+  );
 };
 
 export default App;

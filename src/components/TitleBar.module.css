@@ -1,0 +1,8 @@
+.titleBar {
+  margin-left: env(titlebar-area-x, 0);
+  margin-top: env(titlebar-area-y, 0);
+  width: env(titlebar-area-width, auto);
+  height: env(titlebar-area-height, 30);
+  white-space: nowrap;
+  -webkit-app-region: drag;
+}
