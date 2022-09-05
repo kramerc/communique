@@ -15,7 +15,8 @@
     "paths": {
       "*": ["node_modules/*"]
     },
-    "lib": ["es2021", "dom"]
+    "lib": ["es2021", "dom"],
+    "target": "ES2021"
   },
   "include": ["src/**/*"]
 }

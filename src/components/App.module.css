@@ -1,0 +1,3 @@
+.main {
+  height: calc(100vh - env(titlebar-area-height, 30) - 2px);
+}

@@ -33,3 +33,13 @@ console.log(
 );
 
 import "./react";
+
+window.addEventListener("DOMContentLoaded", () => {
+  window.api.connect("localhost", {
+    host: "localhost",
+    port: 6667,
+    nick: "Remark",
+    username: "remark",
+    gecos: "remark",
+  });
+});

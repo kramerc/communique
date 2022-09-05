@@ -18,5 +18,8 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json"
+  },
+  "rules": {
+    "@typescript-eslint/no-unnecessary-condition": "off" // Disabled due to false positives on Record types
   }
 }
